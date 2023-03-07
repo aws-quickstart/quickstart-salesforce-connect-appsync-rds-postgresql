@@ -12,6 +12,7 @@ project:
     GraphQLSchemaName: postgres-schema.graphql
     RDSSchemaLocation: https://raw.githubusercontent.com/rossbelmont/graphql-impl-guide-sf-connect/main/postgres-ddl.sql
     RDSSchemaName: postgres-ddl.sql
+    AutoPauseCluster: true
   regions:
     - af-south-1
     - ap-east-1
