@@ -1,7 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description:
-  "Creates resources necessary for GraphQL RDS integration - with existing VPC"
+Description: Creates resources necessary for GraphQL RDS integration - with existing VPC (qs-1tuqqm230).
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -12,8 +11,6 @@ Metadata:
           - VPCID
           - PrivateSubnet1ID
           - PrivateSubnet2ID
-          - PublicSubnet1ID
-          - PublicSubnet2ID
           - AvailabilityZones
       - Label:
           default: Choose a deployment option
@@ -40,6 +37,41 @@ Metadata:
           - GraphQLSchemaName
           - RDSSchemaLocation
           - RDSSchemaName
+    ParameterLabels:
+      VPCID:
+        default: VPC ID
+      PrivateSubnet1ID:
+        default: Private subnet 1 ID
+      PrivateSubnet2ID:
+        default: Private subnet 2 ID
+      AvailabilityZones:
+        default: Availability zones
+      RDSClusterMode:
+        default: RDS cluster mode
+      DBInstanceClass:
+        default: DB instance class
+      AutoPauseCluster:
+        default: Auto pause cluster
+      SecondsUntilAutoPause:
+        default: Seconds until auto pause
+      MinCapacity:
+        default: Minimum capacity
+      MaxCapacity:
+        default: Maximum capacity
+      AppSyncAuthenticationType:
+        default: AppSync authentication type
+      GraphQLAdapterLocation:
+        default: GraphQL adapter location
+      GraphQLAdapterName:
+        default: GraphQL adapter name
+      GraphQLSchemaLocation:
+        default: GraphQL schema location
+      GraphQLSchemaName:
+        default: GraphQL schema name
+      RDSSchemaLocation:
+        default: RDS schema location
+      RDSSchemaName:
+        default: RDS schema name
 
 Parameters:
   RDSClusterMode:
@@ -108,18 +140,6 @@ Parameters:
   VPCID:
     Type: AWS::EC2::VPC::Id
     Description: ID of your existing VPC (e.g., vpc-0343606e).
-  PublicSubnet1ID:
-    Type: String
-    Description: >-
-      ID of the public subnet in Availability Zone 1 of your existing VPC
-      (example: subnet-a0246dcd).
-    Default: ''
-  PublicSubnet2ID:
-    Type: String
-    Description: >-
-      ID of the public subnet in Availability Zone 2 of your existing VPC
-      (example: subnet-b1236eea).
-    Default: ''
   PrivateSubnet1ID:
     Type: AWS::EC2::Subnet::Id
     Description: >-
@@ -251,7 +271,7 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -267,8 +287,8 @@ Resources:
             Version: 2012-10-17
             Statement:
               - Resource:
-                  - !Sub "arn:aws:s3:::${ArtifactsBucket}"
-                  - !Sub "arn:aws:s3:::${ArtifactsBucket}/*"
+                  - !Sub "arn:${AWS::Partition}:s3:::${ArtifactsBucket}"
+                  - !Sub "arn:${AWS::Partition}:s3:::${ArtifactsBucket}/*"
                 Effect: Allow
                 Action:
                   - s3:GetObject
@@ -346,9 +366,9 @@ Resources:
                 Action:
                   - ssm:GetParameter
                 Resource:
-                  - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${MyOrderParameter}"
-                  - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${MyOrderItemParameter}"
-                  - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${MyProductParameter}"
+                  - !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter${MyOrderParameter}"
+                  - !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter${MyOrderItemParameter}"
+                  - !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter${MyProductParameter}"
         - PolicyName: SecretsManager
           PolicyDocument:
             Version: 2012-10-17
@@ -372,12 +392,17 @@ Resources:
                   - !GetAtt RDSSecretsKey.Arn
                   - !GetAtt ServerlessRDSSecretsKey.Arn
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
 
   RDSResolverLambda:
     Type: AWS::Lambda::Function
     DependsOn: CodeBuildRun
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks:
+            - E3002
     Properties:
       Handler: "graphql.appsync.AppSyncSqlResolverLambdaRequestHandler::handleRequest"
       Runtime: java11
@@ -452,6 +477,11 @@ Resources:
 
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks:
+            - EIAMPolicyWildcardResource
     Properties:
       Path: /
       AssumeRolePolicyDocument:
@@ -467,8 +497,8 @@ Resources:
             Version: 2012-10-17
             Statement:
               - Resource:
-                  - !Sub "arn:aws:s3:::${ArtifactsBucket}"
-                  - !Sub "arn:aws:s3:::${ArtifactsBucket}/*"
+                  - !Sub "arn:${AWS::Partition}:s3:::${ArtifactsBucket}"
+                  - !Sub "arn:${AWS::Partition}:s3:::${ArtifactsBucket}/*"
                 Effect: Allow
                 Action:
                   - s3:GetObject
@@ -492,8 +522,8 @@ Resources:
                 Action:
                   - kms:Decrypt
               - Resource:
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*"
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*:*"
+                  - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*"
+                  - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*:*"
                 Effect: Allow
                 Action:
                   - logs:CreateLogGroup
@@ -509,7 +539,7 @@ Resources:
                   - ec2:DeleteNetworkInterface
                   - ec2:DescribeSubnets
                   - ec2:DescribeVpcs
-              - Resource: !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*'
+              - Resource: !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*'
                 Effect: Allow
                 Action:
                   - ec2:CreateNetworkInterfacePermission
@@ -848,7 +878,7 @@ Resources:
               Service: lambda.amazonaws.com
             Action: sts:AssumeRole
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
         - PolicyDocument:
             Version: 2012-10-17
@@ -861,8 +891,8 @@ Resources:
                   - s3:DeleteObject
                   - s3:DeleteObjectVersion
                 Resource:
-                  - !Sub "arn:aws:s3:::${ArtifactsBucket}"
-                  - !Sub "arn:aws:s3:::${ArtifactsBucket}/*"
+                  - !Sub "arn:${AWS::Partition}:s3:::${ArtifactsBucket}"
+                  - !Sub "arn:${AWS::Partition}:s3:::${ArtifactsBucket}/*"
           PolicyName: ArtifactDeleteS3BucketPolicy
 
   ArtifactsBucketDeleteLambda:
@@ -1063,6 +1093,12 @@ Resources:
   RDSSecretsKey:
     Type: AWS::KMS::Key
     Condition: CreateStandardCluster
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks:
+            - EIAMPolicyWildcardResource
+            - EIAMPolicyActionWildcard
     Properties:
       Description: An symmetric CMK for Secrets Manager
       EnableKeyRotation: true
@@ -1155,6 +1191,12 @@ Resources:
   ServerlessRDSSecretsKey:
     Type: AWS::KMS::Key
     Condition: CreateServerlessCluster
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks:
+            - EIAMPolicyWildcardResource
+            - EIAMPolicyActionWildcard
     Properties:
       Description: An symmetric CMK for Secrets Manager
       EnableKeyRotation: true

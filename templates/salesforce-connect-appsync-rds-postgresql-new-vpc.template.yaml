@@ -1,7 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description:
-  "Creates resources necessary for GraphQL RDS integration - using new VPC"
+Description: Creates resources necessary for GraphQL RDS integration - using new VPC (qs-1tuqqm21j).
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -40,6 +39,57 @@ Metadata:
           - GraphQLSchemaName
           - RDSSchemaLocation
           - RDSSchemaName
+      - Label:
+          default: AWS Quick Start configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
+          - QSS3BucketRegion
+    ParameterLabels:
+      VPCCIDR:
+        default: VPC CIDR
+      PrivateSubnet1CIDR:
+        default: Private subnet 1 CIDR
+      PrivateSubnet2CIDR:
+        default: Private subnet 2 CIDR
+      PublicSubnet1CIDR:
+        default: Public subnet 1 CIDR
+      PublicSubnet2CIDR:
+        default: Public subnet 2 CIDR
+      AvailabilityZones:
+        default: Availability zones
+      RDSClusterMode:
+        default: RDS cluster mode
+      DBInstanceClass:
+        default: DB instance class
+      AutoPauseCluster:
+        default: Auto pause cluster
+      SecondsUntilAutoPause:
+        default: Seconds until auto pause
+      MinCapacity:
+        default: Minimum capacity
+      MaxCapacity:
+        default: Maximum capacity
+      AppSyncAuthenticationType:
+        default: AppSync authentication type
+      GraphQLAdapterLocation:
+        default: GraphQL adapter location
+      GraphQLAdapterName:
+        default: GraphQL adapter name
+      GraphQLSchemaLocation:
+        default: GraphQL schema location
+      GraphQLSchemaName:
+        default: GraphQL schema name
+      RDSSchemaLocation:
+        default: RDS schema location
+      RDSSchemaName:
+        default: RDS schema name
+      QSS3BucketName:
+        default: Quick Start S3 bucket name
+      QSS3KeyPrefix:
+        default: Quick Start S3 key prefix
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket Region
 
 Parameters:
   RDSClusterMode:
@@ -243,8 +293,6 @@ Resources:
         VPCID: !GetAtt VPCStack.Outputs.VPCID
         PrivateSubnet1ID: !GetAtt VPCStack.Outputs.PrivateSubnet1AID
         PrivateSubnet2ID: !GetAtt VPCStack.Outputs.PrivateSubnet2AID
-        PublicSubnet1ID: !GetAtt VPCStack.Outputs.PublicSubnet1ID
-        PublicSubnet2ID: !GetAtt VPCStack.Outputs.PublicSubnet2ID
         RDSClusterMode: !Ref RDSClusterMode
         AutoPauseCluster: !Ref AutoPauseCluster
         SecondsUntilAutoPause: !Ref SecondsUntilAutoPause
