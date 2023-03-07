@@ -1276,7 +1276,7 @@ Resources:
   AppSyncApi:
     Type: AWS::AppSync::GraphQLApi
     Properties:
-      Name: !Sub "GraphQL-RDS-${AWS::StackName}"
+      Name: "Salesforce-Connect-AppSync-RDS-PostgreSQL"
       AuthenticationType: !Ref AppSyncAuthenticationType
       LogConfig:
         CloudWatchLogsRoleArn: !GetAtt AppSyncServiceRole.Arn
