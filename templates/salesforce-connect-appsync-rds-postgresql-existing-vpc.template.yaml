@@ -86,9 +86,9 @@ Parameters:
   AutoPauseCluster:
     Type: String
     AllowedValues:
-      - true
-      - false
-    Default: true
+      - 'true'
+      - 'false'
+    Default: 'true'
     Description: Do you want the serverless cluster to scale the capacity to 0 ACUs when cluster is idle?
 
   SecondsUntilAutoPause:
@@ -155,7 +155,6 @@ Parameters:
       two Availability Zones are used for this deployment, and the logical order of
       your selections is preserved.
     Type: List<AWS::EC2::AvailabilityZone::Name>
-
 
   DBInstanceClass:
     Description: RDS Instance Class

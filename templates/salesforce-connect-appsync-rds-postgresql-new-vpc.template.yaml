@@ -104,9 +104,9 @@ Parameters:
   AutoPauseCluster:
     Type: String
     AllowedValues:
-      - true
-      - false
-    Default: true
+      - 'true'
+      - 'false'
+    Default: 'true'
     Description: Do you want the serverless cluster to scale the capacity to 0 ACUs when cluster is idle?
 
   SecondsUntilAutoPause:
