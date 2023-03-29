@@ -6,12 +6,12 @@ project:
     AvailabilityZones: $[taskcat_genaz_2]
     QSS3BucketName: $[taskcat_autobucket]
     QSS3BucketRegion: $[taskcat_current_region]
-    GraphQLAdapterLocation: "https://github.com/rossbelmont/graphql-impl-guide-sf-connect/raw/main/graphql.resolvers.sql-1.0.0.jar"
-    GraphQLAdapterName: "graphql.resolvers.sql-1.0.0.jar"
-    GraphQLSchemaLocation: "https://raw.githubusercontent.com/rossbelmont/graphql-impl-guide-sf-connect/main/postgres-schema.graphql"
-    GraphQLSchemaName: "postgres-schema.graphql"
-    RDSSchemaLocation: "https://raw.githubusercontent.com/rossbelmont/graphql-impl-guide-sf-connect/main/postgres-ddl.sql"
-    RDSSchemaName: "postgres-ddl.sql"
+    GraphQLAdapterLocation: --override--
+    GraphQLAdapterName: --override--
+    GraphQLSchemaLocation: --override--
+    GraphQLSchemaName: --override--
+    RDSSchemaLocation: --override--
+    RDSSchemaName: --override--
   regions:
     - af-south-1
     - ap-east-1

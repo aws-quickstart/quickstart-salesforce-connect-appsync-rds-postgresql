@@ -1,0 +1,408 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creates resources necessary for GraphQL RDS integration - with existing VPC (qs-1tuqqm230).
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Network configuration
+        Parameters:
+          - VPCID
+          - PrivateSubnet1ID
+          - PrivateSubnet2ID
+      - Label:
+          default: General configuration
+        Parameters:
+          - ArtifactsBucket
+          - MyOrderParameter
+          - MyOrderItemParameter
+          - MyProductParameter
+          - RDSSecretsKey
+          - RDSSecret
+    ParameterLabels:
+      VPCID:
+        default: VPC ID
+      PrivateSubnet1ID:
+        default: Private subnet 1 ID
+      PrivateSubnet2ID:
+        default: Private subnet 2 ID
+      ArtifactsBucket:
+        default: Artifacts bucket
+      MyOrderParameter:
+        default: My order parameter store
+      MyOrderItemParameter:
+        default: My order item parameter store
+      MyProductParameter:
+        default: My product parameter store
+      RDSSecretsKey:
+        default: RDS Secrets Key ARN
+      RDSSecret:
+        default: RDS Secrets ARN
+
+Parameters:
+  VPCID:
+    Type: AWS::EC2::VPC::Id
+    Description: ID of your existing VPC (e.g., vpc-0343606e).
+  PrivateSubnet1ID:
+    Type: AWS::EC2::Subnet::Id
+    Description: >-
+      ID of the private subnet in Availability Zone 1 of your existing VPC
+      (example: subnet-fe9a8b32).
+  PrivateSubnet2ID:
+    Type: AWS::EC2::Subnet::Id
+    Description: >-
+      ID of the private subnet in Availability Zone 2 of your existing VPC
+      (example: subnet-be8b01ea).
+  ArtifactsBucket:
+    Description: Location where artifacts is stored
+    Type: String
+  MyOrderParameter:
+    Type: String
+  MyOrderItemParameter:
+    Type: String
+  MyProductParameter:
+    Type: String
+  RDSSecretsKey:
+    Type: String
+  RDSSecret:
+    Type: String
+
+
+Resources:
+  AppSyncServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Principal:
+              Service:
+                - appsync.amazonaws.com
+      Policies:
+        - PolicyName: codebuild
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource:
+                  - !Sub "arn:${AWS::Partition}:s3:::${ArtifactsBucket}"
+                  - !Sub "arn:${AWS::Partition}:s3:::${ArtifactsBucket}/*"
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:GetBucketAcl
+                  - s3:GetBucketLocation
+                  - s3:ListBucket
+
+  RDSResolverLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: SSMParameterStore
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter
+                Resource:
+                  - !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter${MyOrderParameter}"
+                  - !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter${MyOrderItemParameter}"
+                  - !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter${MyProductParameter}"
+        - PolicyName: SecretsManager
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource:
+                  - !Ref RDSSecret
+        - PolicyName: KMS
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - kms:Decrypt
+                Resource: !Ref RDSSecretsKey
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+
+  CodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks:
+            - EIAMPolicyWildcardResource
+          ignore_reasons:
+            EIAMPolicyWildcardResource: >-
+              This is based on AWS documentation. The Resource element uses a * wildcard 
+              to indicate that users can specify all resources with these API actions. 
+              The * wildcard is also necessary in cases where the API action does not 
+              support resource-level permissions.
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+      Policies:
+        - PolicyName: codebuild
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource:
+                  - !Sub "arn:${AWS::Partition}:s3:::${ArtifactsBucket}"
+                  - !Sub "arn:${AWS::Partition}:s3:::${ArtifactsBucket}/*"
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:GetBucketAcl
+                  - s3:GetBucketLocation
+                  - s3:PutObject
+                  - s3:ListBucket
+              - Resource: !Ref RDSSecret
+                Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+              - Resource: !Ref RDSSecretsKey
+                Effect: Allow
+                Action:
+                  - kms:Decrypt
+              - Resource:
+                  - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*"
+                  - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*:*"
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+              - Resource: "*"
+                Effect: Allow
+                Action:
+                  - ec2:DescribeSecurityGroups
+                  - ec2:CreateNetworkInterface
+                  - ec2:DescribeDhcpOptions
+                  - ec2:DescribeNetworkInterfaces
+                  - ec2:DeleteNetworkInterface
+                  - ec2:DescribeSubnets
+                  - ec2:DescribeVpcs
+              - Resource: !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*'
+                Effect: Allow
+                Action:
+                  - ec2:CreateNetworkInterfacePermission
+                Condition:
+                  StringEquals:
+                    'ec2:AuthorizedService': codebuild.amazonaws.com
+                  ArnEquals:
+                    'ec2:Subnet':
+                      - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${PrivateSubnet1ID}'
+                      - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${PrivateSubnet2ID}'
+
+  CodeBuildSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Private SG For internal communication
+      VpcId: !Ref VPCID
+
+  CodeBuildSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Allow EC2 Instance to connect
+      GroupId: !Ref CodeBuildSecurityGroup
+      IpProtocol: "tcp"
+      FromPort: 0
+      ToPort: 0
+      SourceSecurityGroupId: !GetAtt CodeBuildSecurityGroup.GroupId
+
+  CodeBuildSecurityGroupEgress1:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      Description: Allow CodeBuild to download packages from the internet
+      GroupId: !Ref CodeBuildSecurityGroup
+      IpProtocol: "tcp"
+      FromPort: 80
+      ToPort: 80
+      CidrIp: 0.0.0.0/0
+
+  CodeBuildSecurityGroupEgress2:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      Description: Allow CodeBuild to download packages from the internet
+      GroupId: !Ref CodeBuildSecurityGroup
+      IpProtocol: "tcp"
+      FromPort: 443
+      ToPort: 443
+      CidrIp: 0.0.0.0/0
+
+  CodeBuildSecurityGroupEgress3:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      Description: Allow CodeBuild to download packages from the internet
+      GroupId: !Ref CodeBuildSecurityGroup
+      IpProtocol: "tcp"
+      FromPort: 5432
+      ToPort: 5432
+      DestinationSecurityGroupId: !GetAtt RDSSecurityGroup.GroupId
+
+  VpcEndpointSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Private SG For internal communication
+      VpcId: !Ref VPCID
+
+  VpcEndpointSecurityGroupIngress1:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Allow EC2 Instance to connect
+      GroupId: !Ref VpcEndpointSecurityGroup
+      IpProtocol: "tcp"
+      FromPort: 443
+      ToPort: 443
+      SourceSecurityGroupId: !GetAtt CodeBuildSecurityGroup.GroupId
+
+  VpcEndpointSecurityGroupIngress2:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Allow EC2 Instance to connect
+      GroupId: !Ref VpcEndpointSecurityGroup
+      IpProtocol: "tcp"
+      FromPort: 443
+      ToPort: 443
+      SourceSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+
+  VpcEndpointSecurityGroupEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      Description: To communicate within the SG
+      GroupId: !Ref VpcEndpointSecurityGroup
+      IpProtocol: "tcp"
+      FromPort: 0
+      ToPort: 0
+      DestinationSecurityGroupId: !GetAtt VpcEndpointSecurityGroup.GroupId
+
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Private SG For internal communication
+      VpcId: !Ref VPCID
+
+  LambdaSecurityGroupIngress1:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Allow EC2 Instance to connect
+      GroupId: !Ref LambdaSecurityGroup
+      IpProtocol: "tcp"
+      FromPort: 0
+      ToPort: 0
+      SourceSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+
+  LambdaSecurityGroupEgress1:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      Description: Allow EC2 Instance to connect
+      GroupId: !Ref LambdaSecurityGroup
+      IpProtocol: "tcp"
+      FromPort: 443
+      ToPort: 443
+      DestinationSecurityGroupId: !GetAtt VpcEndpointSecurityGroup.GroupId
+
+  LambdaSecurityGroupEgress2:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      Description: Allow EC2 Instance to connect
+      GroupId: !Ref LambdaSecurityGroup
+      IpProtocol: "tcp"
+      FromPort: 5432
+      ToPort: 5432
+      DestinationSecurityGroupId: !GetAtt RDSSecurityGroup.GroupId
+
+  RDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Private SG For internal communication
+      VpcId: !Ref VPCID
+
+  RDSSecurityGroupIngress1:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Allow EC2 Instance to connect
+      GroupId: !Ref RDSSecurityGroup
+      IpProtocol: "tcp"
+      FromPort: 5432
+      ToPort: 5432
+      SourceSecurityGroupId: !GetAtt CodeBuildSecurityGroup.GroupId
+
+  RDSSecurityGroupIngress2:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Allow EC2 Instance to connect
+      GroupId: !Ref RDSSecurityGroup
+      IpProtocol: "tcp"
+      FromPort: 5432
+      ToPort: 5432
+      SourceSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+
+  RDSSecurityGroupEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      Description: To communicate within the SG
+      GroupId: !Ref RDSSecurityGroup
+      IpProtocol: "tcp"
+      FromPort: 0
+      ToPort: 0
+      DestinationSecurityGroupId: !GetAtt RDSSecurityGroup.GroupId
+
+  SSMVPCEndpoint:
+    Type: 'AWS::EC2::VPCEndpoint'
+    Properties:
+      VpcEndpointType: Interface
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.ssm'
+      PrivateDnsEnabled: true
+      VpcId: !Ref VPCID
+      SubnetIds: [!Ref PrivateSubnet1ID, !Ref PrivateSubnet2ID]
+      SecurityGroupIds: [!Ref VpcEndpointSecurityGroup]
+
+  SecretsManagerVPCEndpoint:
+    Type: 'AWS::EC2::VPCEndpoint'
+    Properties:
+      VpcEndpointType: Interface
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.secretsmanager'
+      PrivateDnsEnabled: true
+      VpcId: !Ref VPCID
+      SubnetIds: [!Ref PrivateSubnet1ID, !Ref PrivateSubnet2ID]
+      SecurityGroupIds: [!Ref VpcEndpointSecurityGroup]
+
+Outputs:
+  RDSResolverLambdaRole:
+    Value: !GetAtt RDSResolverLambdaRole.Arn
+  CodeBuildServiceRole:
+    Value: !GetAtt CodeBuildServiceRole.Arn
+  LambdaSecurityGroup:
+    Value: !Ref LambdaSecurityGroup
+  CodeBuildSecurityGroup:
+    Value: !Ref CodeBuildSecurityGroup
+  RDSSecurityGroup:
+    Value: !Ref RDSSecurityGroup
+  AppSyncServiceRole:
+    Value: !GetAtt AppSyncServiceRole.Arn

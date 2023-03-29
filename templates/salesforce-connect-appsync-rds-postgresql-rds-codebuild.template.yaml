@@ -1,0 +1,745 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creates resources necessary for GraphQL RDS integration - with existing VPC (qs-1tuqqm230).
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Network configuration
+        Parameters:
+          - VPCID
+          - PrivateSubnet1ID
+          - PrivateSubnet2ID
+          - AvailabilityZones
+      - Label:
+          default: General configuration
+        Parameters:
+          - ArtifactsBucket
+          - RDSSecret
+      - Label:
+          default: RDS Database Configuration
+        Parameters:
+          - DatabaseUserName
+          - DatabaseName
+          - DatabasePort
+      - Label:
+          default: Roles and Security Groups
+        Parameters:
+          - RDSResolverLambdaRole
+          - CodeBuildServiceRole
+          - LambdaSecurityGroup
+          - CodeBuildSecurityGroup
+          - RDSSecurityGroup
+      - Label:
+          default: Choose a deployment option
+        Parameters:
+          - RDSClusterMode
+      - Label:
+          default: RDS Standard Mode Configuration
+        Parameters:
+          - DBInstanceClass
+      - Label:
+          default: RDS Serverless Mode Configuration
+        Parameters:
+          - AutoPauseCluster
+          - SecondsUntilAutoPause
+          - MinCapacity
+          - MaxCapacity
+      - Label:
+          default: AppSync
+        Parameters:
+          - GraphQLAdapterLocation
+          - GraphQLAdapterName
+          - GraphQLSchemaLocation
+          - GraphQLSchemaName
+          - RDSSchemaLocation
+          - RDSSchemaName
+    ParameterLabels:
+      VPCID:
+        default: VPC ID
+      PrivateSubnet1ID:
+        default: Private subnet 1 ID
+      PrivateSubnet2ID:
+        default: Private subnet 2 ID
+      AvailabilityZones:
+        default: Availability zones
+      ArtifactsBucket:
+        default: Artifacts bucket
+      RDSSecret:
+        default: RDS Secrets Manager secret
+      RDSResolverLambdaRole:
+        default: RDS Resolver Lambda Role
+      CodeBuildServiceRole:
+        default: Code Build Service Role
+      LambdaSecurityGroup:
+        default: Lambda Security Group
+      CodeBuildSecurityGroup:
+        default: CodeBuild Security Group
+      RDSSecurityGroup:
+        default: RDS Security Group
+      RDSClusterMode:
+        default: RDS cluster mode
+      DBInstanceClass:
+        default: DB instance class
+      DatabaseUserName:
+        default: Database user name
+      DatabaseName:
+        default: Database name
+      DatabasePort:
+        default: Database port
+      AutoPauseCluster:
+        default: Auto pause cluster
+      SecondsUntilAutoPause:
+        default: Seconds until auto pause
+      MinCapacity:
+        default: Minimum capacity
+      MaxCapacity:
+        default: Maximum capacity
+      GraphQLAdapterLocation:
+        default: GraphQL adapter location
+      GraphQLAdapterName:
+        default: GraphQL adapter name
+      GraphQLSchemaLocation:
+        default: GraphQL schema location
+      GraphQLSchemaName:
+        default: GraphQL schema name
+      RDSSchemaLocation:
+        default: RDS schema location
+      RDSSchemaName:
+        default: RDS schema name
+
+Parameters:
+  RDSClusterMode:
+    Type: String
+    AllowedValues:
+      - Serverless
+      - Standard
+    Default: Serverless
+    Description: >
+      Choose whether to deploy a standard Amazon Aurora or Serverless (v1).
+
+  AutoPauseCluster:
+    Type: String
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: Do you want the serverless cluster to scale the capacity to 0 ACUs when cluster is idle?
+
+  SecondsUntilAutoPause:
+    Type: Number
+    AllowedValues:
+      - 300
+      - 600
+      - 1200
+      - 3600
+      - 14400
+      - 28800
+      - 86400
+    Default: 300
+    Description: >
+      The time, in seconds, before an Aurora DB cluster in serverless mode is paused (scale capacity
+      down to 0 ACU). Values are 5/10/20 minutes, 1/4/8/24 hours.
+
+  MinCapacity:
+    Type: Number
+    AllowedValues:
+      - 2
+      - 4
+      - 8
+      - 16
+      - 32
+      - 64
+      - 192
+      - 384
+    Default: 2
+    Description: >
+      The minimum capacity for an Aurora DB cluster in serverless DB engine mode.
+
+  MaxCapacity:
+    Type: Number
+    AllowedValues:
+      - 2
+      - 4
+      - 8
+      - 16
+      - 32
+      - 64
+      - 192
+      - 384
+    Default: 16
+    Description: >
+      The maximum capacity for an Aurora DB cluster in serverless DB engine mode. 
+      This value should be greater than or equal to MinCapacity. 
+
+  DatabaseUserName:
+    Description: Database user name
+    Type: String
+    Default: dbadmin
+  DatabaseName:
+    Description: Database name
+    Type: String
+    Default: graphqlrds
+  DatabasePort:
+    Type: String
+    Default: 5432
+
+  VPCID:
+    Type: AWS::EC2::VPC::Id
+    Description: ID of your existing VPC (e.g., vpc-0343606e).
+  PrivateSubnet1ID:
+    Type: AWS::EC2::Subnet::Id
+    Description: >-
+      ID of the private subnet in Availability Zone 1 of your existing VPC
+      (example: subnet-fe9a8b32).
+  PrivateSubnet2ID:
+    Type: AWS::EC2::Subnet::Id
+    Description: >-
+      ID of the private subnet in Availability Zone 2 of your existing VPC
+      (example: subnet-be8b01ea).
+  AvailabilityZones:
+    Description: List of Availability Zones to use for the subnets in the VPC. Only
+      two Availability Zones are used for this deployment, and the logical order of
+      your selections is preserved.
+    Type: List<AWS::EC2::AvailabilityZone::Name>
+
+  ArtifactsBucket:
+    Type: String
+
+  RDSSecret:
+    Type: String
+
+  RDSResolverLambdaRole:
+    Type: String
+  CodeBuildServiceRole:
+    Type: String
+  LambdaSecurityGroup:
+    Type: String
+  CodeBuildSecurityGroup:
+    Type: String
+  RDSSecurityGroup:
+    Type: String
+
+  DBInstanceClass:
+    Description: RDS Instance Class
+    Type: String
+    Default: db.t3.medium
+    AllowedValues:
+      - db.r5.large
+      - db.r5.xlarge
+      - db.r5.2xlarge
+      - db.r5.4xlarge
+      - db.r5.8xlarge
+      - db.t3.medium
+      - db.t3.large
+
+  GraphQLAdapterLocation:
+    Description: Provide the location of the JAR or ZIP file.
+    Type: String
+
+  GraphQLAdapterName:
+    Description: Adapter name
+    Type: String
+
+  GraphQLSchemaLocation:
+    Description: Provide the location of GraphQL schema.
+    Type: String
+
+  GraphQLSchemaName:
+    Description: GraphQL schema name.
+    Type: String
+
+  RDSSchemaLocation:
+    Description: Provide the location of RDS schema.
+    Type: String
+
+  RDSSchemaName:
+    Description: RDS Schema name
+    Type: String
+
+
+Mappings:
+  SnapStartRegionMap:
+    us-east-1:
+      "SnapStart": "true"
+    us-east-2:
+      "SnapStart": "true"
+    us-west-2:
+      "SnapStart": "true"
+    ap-southeast-1:
+      "SnapStart": "true"
+    ap-southeast-2:
+      "SnapStart": "true"
+    ap-northeast-1:
+      "SnapStart": "true"
+    eu-central-1:
+      "SnapStart": "true"
+    eu-west-1:
+      "SnapStart": "true"
+    eu-north-1:
+      "SnapStart": "true"
+    us-west-1:
+      "SnapStart": "false"
+    af-south-1:
+      "SnapStart": "false"
+    ap-east-1:
+      "SnapStart": "false"
+    ap-south-2:
+      "SnapStart": "false"
+    ap-southeast-3:
+      "SnapStart": "false"
+    ap-southeast-4:
+      "SnapStart": "false"
+    ap-south-1:
+      "SnapStart": "false"
+    ap-northeast-3:
+      "SnapStart": "false"
+    ap-northeast-2:
+      "SnapStart": "false"
+    ca-central-1:
+      "SnapStart": "false"
+    eu-west-2:
+      "SnapStart": "false"
+    eu-south-1:
+      "SnapStart": "false"
+    eu-west-3:
+      "SnapStart": "false"
+    eu-south-2:
+      "SnapStart": "false"
+    eu-central-2:
+      "SnapStart": "false"
+    me-south-1:
+      "SnapStart": "false"
+    me-central-1:
+      "SnapStart": "false"
+    sa-east-1:
+      "SnapStart": "false"
+
+Conditions:
+  EnableSnapStart: !Equals [ !FindInMap [ SnapStartRegionMap, !Ref "AWS::Region", SnapStart ], "true" ]
+  CreateServerlessCluster: !Equals [!Ref RDSClusterMode, "Serverless"]
+  CreateStandardCluster: !Equals [ !Ref RDSClusterMode, "Standard" ]
+  AutoPauseClusterCondition: !Equals [!Ref AutoPauseCluster, "true"]
+
+
+Resources:
+  AppSyncLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Principal:
+              Service:
+                - appsync.amazonaws.com
+      Policies:
+        - PolicyName: Lambda
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:invokeFunction
+                Resource: !Ref RDSResolverLambdaVersion
+
+  RDSResolverLambda:
+    Type: AWS::Lambda::Function
+    DependsOn: CodeBuildRun
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks:
+            - E3002
+          ignore_reasons:
+            E3002: >-
+              SnapStart is a valid resource property.
+    Properties:
+      Handler: "graphql.appsync.AppSyncSqlResolverLambdaRequestHandler::handleRequest"
+      Runtime: java11
+      MemorySize: 512
+      Timeout: 120
+      SnapStart:
+        !If
+        - EnableSnapStart
+        -
+          ApplyOn: PublishedVersions
+        - !Ref "AWS::NoValue"
+      Role: !Ref RDSResolverLambdaRole
+      Code:
+        S3Bucket: !Ref ArtifactsBucket
+        S3Key: !Ref GraphQLAdapterName
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroup
+        SubnetIds:
+          - !Ref PrivateSubnet1ID
+          - !Ref PrivateSubnet2ID
+
+  RDSResolverLambdaVersion:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName: !GetAtt RDSResolverLambda.Arn
+      Description: v1
+
+  RDSWaitHandle:
+    Condition: CreateStandardCluster
+    DependsOn: RDSDBInstance1
+    Type: "AWS::CloudFormation::WaitConditionHandle"
+
+  ServerlessRDSWaitHandle:
+    Condition: CreateServerlessCluster
+    DependsOn: ServerlessRDSCluster
+    Type: "AWS::CloudFormation::WaitConditionHandle"
+
+  RDSWaitCondition:
+    Type: "AWS::CloudFormation::WaitCondition"
+    Properties:
+      Handle: !If
+        - CreateStandardCluster
+        - !Ref RDSWaitHandle
+        - !Ref ServerlessRDSWaitHandle
+      Timeout: "1"
+      Count: 0
+
+  SMAttachmentWaitHandle:
+    Condition: CreateStandardCluster
+    DependsOn: SMRDSAttachment
+    Type: "AWS::CloudFormation::WaitConditionHandle"
+
+  SMServerlessAttachmentWaitHandle:
+    Condition: CreateServerlessCluster
+    DependsOn: SMServerlessRDSAttachment
+    Type: "AWS::CloudFormation::WaitConditionHandle"
+
+  SMAttachmentWaitCondition:
+    Type: "AWS::CloudFormation::WaitCondition"
+    Properties:
+      Handle: !If
+        - CreateStandardCluster
+        - !Ref SMAttachmentWaitHandle
+        - !Ref SMServerlessAttachmentWaitHandle
+      Timeout: "1"
+      Count: 0
+
+
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    DependsOn:
+      - RDSWaitCondition
+      - SMAttachmentWaitCondition
+    Properties:
+      Description: !Sub >-
+        GraphQL setup for: ${AWS::StackName}
+      ServiceRole: !Ref CodeBuildServiceRole
+      EncryptionKey: alias/aws/s3
+      Artifacts:
+        Type: NO_ARTIFACTS
+      Source:
+        Type: NO_SOURCE
+        BuildSpec: |
+          version: 0.2
+          phases:
+            pre_build:
+              commands:
+                - echo `ls -altr`
+                - echo `pwd`
+            build:
+              commands:
+                - echo Build started on `date`
+                - wget $GRAPHQL_ADAPTER_LOCATION
+                - wget $GRAPHQL_SCHEMA_LOCATION
+                - ls -lrt
+                - aws s3 cp $GRAPHQL_ADAPTER_NAME s3://$ARTIFACTS_BUCKET_LOCATION/
+                - aws s3 cp $GRAPHQL_SCHEMA_NAME s3://$ARTIFACTS_BUCKET_LOCATION/
+
+                - sudo yum update -y
+                - sudo yum install -y autoconf readline-devel zlib-devel jq
+                - sudo yum install -y gcc jemalloc-devel openssl-devel tcl tcl-devel clang wget
+                - wget https://ftp.postgresql.org/pub/source/v12.5/postgresql-12.5.tar.gz
+                - tar -xzf postgresql-12.5.tar.gz
+                - cd postgresql-12.5
+                - autoconf
+                - ./configure
+                - make -j 4 all
+                - sudo make install
+                - wget $SCHEMA_DDL_LOCATION
+                - export DBUSER=`aws secretsmanager get-secret-value  --secret-id $SECRET_NAME --region $AWS_DEFAULT_REGION --query 'SecretString' --output text | jq -r '."username"'`
+                - export PORT=`aws secretsmanager get-secret-value  --secret-id $SECRET_NAME --region $AWS_DEFAULT_REGION --query 'SecretString' --output text | jq -r '."port"'` 
+                - export DB=`aws secretsmanager get-secret-value  --secret-id $SECRET_NAME --region $AWS_DEFAULT_REGION --query 'SecretString' --output text | jq -r '."dbname"'`
+                - export HOST=`aws secretsmanager get-secret-value  --secret-id $SECRET_NAME --region $AWS_DEFAULT_REGION --query 'SecretString' --output text | jq -r '."host"'`
+                - export DBPASSWORD=`aws secretsmanager get-secret-value  --secret-id $SECRET_NAME --region $AWS_DEFAULT_REGION --query 'SecretString' --output text | jq -r '."password"'`
+                - export PGPASSWORD=$DBPASSWORD
+                - cat $SCHEMA_DDL_NAME | psql -h$HOST -p $PORT -U$DBUSER -d $DB 
+            post_build:
+              commands:
+                - echo Build completed on `date`
+          artifacts:
+            files:
+              - build.json
+      Environment:
+        ComputeType: BUILD_GENERAL1_MEDIUM
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        Type: LINUX_CONTAINER
+        PrivilegedMode: True
+        EnvironmentVariables:
+          - Name: AWS_DEFAULT_REGION
+            Value: !Ref AWS::Region
+          - Name: AWS_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Name: GRAPHQL_ADAPTER_LOCATION
+            Value: !Ref GraphQLAdapterLocation
+          - Name: GRAPHQL_ADAPTER_NAME
+            Value: !Ref GraphQLAdapterName
+          - Name: GRAPHQL_SCHEMA_LOCATION
+            Value: !Ref GraphQLSchemaLocation
+          - Name: GRAPHQL_SCHEMA_NAME
+            Value: !Ref GraphQLSchemaName
+          - Name: SCHEMA_DDL_LOCATION
+            Value: !Ref RDSSchemaLocation
+          - Name: SCHEMA_DDL_NAME
+            Value: !Ref RDSSchemaName
+          - Name: ARTIFACTS_BUCKET_LOCATION
+            Value: !Ref ArtifactsBucket
+          - Name: SECRET_NAME
+            Value: !Ref RDSSecret
+      TimeoutInMinutes: 60
+      VpcConfig:
+        VpcId:
+          !Ref VPCID
+        SecurityGroupIds:
+          - !Ref CodeBuildSecurityGroup
+        Subnets:
+          - !Ref PrivateSubnet1ID
+          - !Ref PrivateSubnet2ID
+
+
+  CodeBuildRun:
+    Type: Custom::CodeBuildRun
+    Properties:
+      ServiceToken: !GetAtt LambdaCodeBuildStartBuild.Arn
+      ProjectName: !Ref CodeBuildProject
+
+  LambdaStartCodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - codebuild:StartBuild
+                  - codebuild:BatchGetBuilds
+                Resource: !GetAtt CodeBuildProject.Arn
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource:
+                  - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+              - Effect: Allow
+                Action:
+                  - lambda:AddPermission
+                  - lambda:RemovePermission
+                Resource:
+                  - !Sub "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:*"
+
+  LambdaCodeBuildStartBuild:
+    Type: AWS::Lambda::Function
+    Properties:
+      Role: !GetAtt LambdaStartCodeBuildRole.Arn
+      Runtime: python3.9
+      Timeout: 600
+      MemorySize: 128
+      Handler: index.lambda_handler
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import time
+          import botocore
+          import subprocess
+          import sys
+          import os
+          from botocore.exceptions import ClientError
+          subprocess.call('pip install requests -t /tmp/ --no-cache-dir'.split(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+          sys.path.insert(1, '/tmp/')
+          import requests
+
+          def lambda_handler(event, context):
+              if (event['RequestType'] == 'Update' or event['RequestType'] == 'Delete'):
+                respond_cloudformation(event, "SUCCESS",
+                                              {"Message": \
+                                                  "Delete or Update request", \
+                                              })
+                return
+
+              client = boto3.client('codebuild')
+              try:
+                response = client.start_build(
+                            projectName=event['ResourceProperties']['ProjectName'])
+              except botocore.exceptions.ClientError as exception:
+                print("An error occurred. Error Stack: {}".format(exception))
+                respond_cloudformation(event, "FAILURE",
+                                              {"Message": \
+                                                  "Error during triggering code build", \
+                                              })
+                sys.exit(0)
+
+              time.sleep(300)
+              respond_cloudformation(event, "SUCCESS",
+                                              {"Message": \
+                                                  "Triggered Code Build", \
+                                              })
+
+          def respond_cloudformation(event, status, data=None):
+              """ Respond to CloudFormation event """
+              responseBody = {
+                  'Status': status,
+                  'Reason': 'Refer to CloudWatch Log Stream',
+                  'PhysicalResourceId': event['ServiceToken'],
+                  'StackId': event['StackId'],
+                  'RequestId': event['RequestId'],
+                  'LogicalResourceId': event['LogicalResourceId'],
+                  'Data': data
+              }
+              print('Response = ' + json.dumps(responseBody))
+              print(event)
+              requests.put(event['ResponseURL'], data=json.dumps(responseBody))
+      Description: This AWS Lambda Function kicks off a code build job.
+
+
+
+  RDSCluster:
+    Type: "AWS::RDS::DBCluster"
+    Condition: CreateStandardCluster
+    Properties:
+      DBClusterParameterGroupName: !Ref RDSDBClusterParameterGroup
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      Engine: aurora-postgresql
+      MasterUserPassword: !Sub "{{resolve:secretsmanager:${RDSSecret}::password}}"
+      MasterUsername: !Ref DatabaseUserName
+      DatabaseName: !Ref DatabaseName
+      Port: !Ref DatabasePort
+      StorageEncrypted: true
+      VpcSecurityGroupIds: [!Ref RDSSecurityGroup]
+      Tags:
+        - Key: Name
+          Value: graphql-rds-cluster
+
+  RDSDBClusterParameterGroup:
+    Type: "AWS::RDS::DBClusterParameterGroup"
+    Condition: CreateStandardCluster
+    Properties:
+      Description: "Aurora Cluster Parameter Group"
+      Family: aurora-postgresql13
+      Parameters:
+        rds.logical_replication: 1
+        wal_sender_timeout: 0
+
+  RDSDBInstance1:
+    Type: "AWS::RDS::DBInstance"
+    Condition: CreateStandardCluster
+    Properties:
+      AvailabilityZone: !Select [0, !Ref AvailabilityZones]
+      DBClusterIdentifier: !Ref RDSCluster
+      DBInstanceClass: !Ref DBInstanceClass
+      DBParameterGroupName: !Ref RDSDBParameterGroup
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      Engine: aurora-postgresql
+      PubliclyAccessible: false
+
+  RDSDBParameterGroup:
+    Type: AWS::RDS::DBParameterGroup
+    Condition: CreateStandardCluster
+    Properties:
+      Description: Aurora Parameter Group
+      Family: aurora-postgresql13
+
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: String
+      DBSubnetGroupName: graphql-rds-subnet-group
+      SubnetIds: [!Ref PrivateSubnet1ID, !Ref PrivateSubnet2ID]
+
+  SMRDSAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Condition: CreateStandardCluster
+    Properties:
+      SecretId: !Ref RDSSecret
+      TargetId: !Ref RDSDBInstance1
+      TargetType: AWS::RDS::DBInstance
+
+  ServerlessRDSCluster:
+    Type: "AWS::RDS::DBCluster"
+    Condition: CreateServerlessCluster
+    Properties:
+      DBClusterParameterGroupName: !Ref ServerlessRDSDBClusterParameterGroup
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      Engine: aurora-postgresql
+      EngineMode: serverless
+      EngineVersion: 11.13
+      EnableHttpEndpoint: true
+      MasterUserPassword: !Sub "{{resolve:secretsmanager:${RDSSecret}::password}}"
+      MasterUsername: !Ref DatabaseUserName
+      DatabaseName: !Ref DatabaseName
+      Port: !Ref DatabasePort
+      ScalingConfiguration:
+        AutoPause: !If
+          - AutoPauseClusterCondition
+          - true
+          - false
+        SecondsUntilAutoPause: !If
+          - AutoPauseClusterCondition
+          - !Ref SecondsUntilAutoPause
+          - !Ref AWS::NoValue
+        MaxCapacity: !Ref MaxCapacity
+        MinCapacity: !Ref MinCapacity
+      StorageEncrypted: true
+      VpcSecurityGroupIds: [!Ref RDSSecurityGroup]
+      Tags:
+        - Key: Name
+          Value: graphql-rds-serverless-cluster
+
+  ServerlessRDSDBClusterParameterGroup:
+    Type: "AWS::RDS::DBClusterParameterGroup"
+    Condition: CreateServerlessCluster
+    Properties:
+      Description: "Aurora Serverless Cluster Parameter Group"
+      Family: aurora-postgresql11
+      Parameters:
+        rds.logical_replication: 1
+        wal_sender_timeout: 0
+
+  SMServerlessRDSAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Condition: CreateServerlessCluster
+    Properties:
+      SecretId: !Ref RDSSecret
+      TargetId: !Ref ServerlessRDSCluster
+      TargetType: AWS::RDS::DBCluster
+
+Outputs:
+  AppSyncLambdaRole:
+    Value: !GetAtt AppSyncLambdaRole.Arn
+  RDSResolverLambdaVersion:
+    Value: !Ref RDSResolverLambdaVersion

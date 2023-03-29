@@ -30,6 +30,12 @@ Metadata:
           - MinCapacity
           - MaxCapacity
       - Label:
+          default: RDS Database Configuration
+        Parameters:
+          - DatabaseUserName
+          - DatabaseName
+          - DatabasePort
+      - Label:
           default: AppSync
         Parameters:
           - AppSyncAuthenticationType
@@ -39,6 +45,9 @@ Metadata:
           - GraphQLSchemaName
           - RDSSchemaLocation
           - RDSSchemaName
+          - MyOrderParameterName
+          - MyOrderItemParameterName
+          - MyProductParameterName
       - Label:
           default: AWS Quick Start configuration
         Parameters:
@@ -70,6 +79,18 @@ Metadata:
         default: Minimum capacity
       MaxCapacity:
         default: Maximum capacity
+      DatabaseUserName:
+        default: Database user name
+      DatabaseName:
+        default: Database name
+      DatabasePort:
+        default: Database port
+      MyOrderParameterName:
+        default: My order parameter name
+      MyOrderItemParameterName:
+        default: My order item parameter name
+      MyProductParameterName:
+        default: My product parameter name
       AppSyncAuthenticationType:
         default: AppSync authentication type
       GraphQLAdapterLocation:
@@ -225,6 +246,31 @@ Parameters:
       - db.t3.medium
       - db.t3.large
 
+  DatabaseUserName:
+    Description: Database user name
+    Type: String
+    Default: dbadmin
+  DatabaseName:
+    Description: Database name
+    Type: String
+    Default: graphqlrds
+  DatabasePort:
+    Type: String
+    Default: 5432
+
+  MyOrderParameterName:
+    Description: My order parameter name
+    Type: String
+    Default: "/appsync/typemetadata/Graphqlsample_MyOrder"
+  MyOrderItemParameterName:
+    Description: My order item parameter name
+    Type: String
+    Default: "/appsync/typemetadata/Graphqlsample_MyOrderItem"
+  MyProductParameterName:
+    Description: My product parameter name
+    Type: String
+    Default: "/appsync/typemetadata/Graphqlsample_MyProduct"
+
   AppSyncAuthenticationType:
     Description: How do you want to authenticate to the AppSync endpoint?
     Type: String
@@ -256,6 +302,7 @@ Parameters:
   RDSSchemaName:
     Description: RDS Schema name
     Type: String
+
 Conditions:
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
 
@@ -306,3 +353,12 @@ Resources:
         GraphQLSchemaName: !Ref GraphQLSchemaName
         RDSSchemaLocation: !Ref RDSSchemaLocation
         RDSSchemaName: !Ref RDSSchemaName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3BucketRegion: !Ref QSS3BucketRegion
+        DatabaseName: !Ref DatabaseName
+        DatabasePort: !Ref DatabasePort
+        DatabaseUserName: !Ref DatabaseUserName
+        MyOrderParameterName: !Ref MyOrderParameterName
+        MyOrderItemParameterName: !Ref MyOrderItemParameterName
+        MyProductParameterName: !Ref MyProductParameterName
