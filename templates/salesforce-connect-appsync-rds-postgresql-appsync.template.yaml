@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: Creates resources necessary for GraphQL RDS integration - with existing VPC (qs-1tuqqm230).
+Description: Creates resources necessary for GraphQL RDS integration - with existing VPC (qs-1u21uotf3).
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
