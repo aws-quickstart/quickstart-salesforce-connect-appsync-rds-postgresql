@@ -1,0 +1,364 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creates resources necessary for GraphQL RDS integration - using new VPC (qs-1tuqqm21j).
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Network configuration
+        Parameters:
+          - VPCCIDR
+          - PrivateSubnet1CIDR
+          - PrivateSubnet2CIDR
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - AvailabilityZones
+      - Label:
+          default: Choose a deployment option
+        Parameters:
+          - RDSClusterMode
+      - Label:
+          default: RDS Standard Mode Configuration
+        Parameters:
+          - DBInstanceClass
+      - Label:
+          default: RDS Serverless Mode Configuration
+        Parameters:
+          - AutoPauseCluster
+          - SecondsUntilAutoPause
+          - MinCapacity
+          - MaxCapacity
+      - Label:
+          default: RDS Database Configuration
+        Parameters:
+          - DatabaseUserName
+          - DatabaseName
+          - DatabasePort
+      - Label:
+          default: AppSync
+        Parameters:
+          - AppSyncAuthenticationType
+          - GraphQLAdapterLocation
+          - GraphQLAdapterName
+          - GraphQLSchemaLocation
+          - GraphQLSchemaName
+          - RDSSchemaLocation
+          - RDSSchemaName
+          - MyOrderParameterName
+          - MyOrderItemParameterName
+          - MyProductParameterName
+      - Label:
+          default: AWS Quick Start configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
+          - QSS3BucketRegion
+    ParameterLabels:
+      VPCCIDR:
+        default: VPC CIDR
+      PrivateSubnet1CIDR:
+        default: Private subnet 1 CIDR
+      PrivateSubnet2CIDR:
+        default: Private subnet 2 CIDR
+      PublicSubnet1CIDR:
+        default: Public subnet 1 CIDR
+      PublicSubnet2CIDR:
+        default: Public subnet 2 CIDR
+      AvailabilityZones:
+        default: Availability zones
+      RDSClusterMode:
+        default: RDS cluster mode
+      DBInstanceClass:
+        default: DB instance class
+      AutoPauseCluster:
+        default: Auto pause cluster
+      SecondsUntilAutoPause:
+        default: Seconds until auto pause
+      MinCapacity:
+        default: Minimum capacity
+      MaxCapacity:
+        default: Maximum capacity
+      DatabaseUserName:
+        default: Database user name
+      DatabaseName:
+        default: Database name
+      DatabasePort:
+        default: Database port
+      MyOrderParameterName:
+        default: My order parameter name
+      MyOrderItemParameterName:
+        default: My order item parameter name
+      MyProductParameterName:
+        default: My product parameter name
+      AppSyncAuthenticationType:
+        default: AppSync authentication type
+      GraphQLAdapterLocation:
+        default: GraphQL adapter location
+      GraphQLAdapterName:
+        default: GraphQL adapter name
+      GraphQLSchemaLocation:
+        default: GraphQL schema location
+      GraphQLSchemaName:
+        default: GraphQL schema name
+      RDSSchemaLocation:
+        default: RDS schema location
+      RDSSchemaName:
+        default: RDS schema name
+      QSS3BucketName:
+        default: Quick Start S3 bucket name
+      QSS3KeyPrefix:
+        default: Quick Start S3 key prefix
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket Region
+
+Parameters:
+  RDSClusterMode:
+    Type: String
+    AllowedValues:
+      - Serverless
+      - Standard
+    Default: Serverless
+    Description: >
+      Choose whether to deploy a standard Amazon Aurora or Serverless (v1).
+
+  AutoPauseCluster:
+    Type: String
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: Do you want the serverless cluster to scale the capacity to 0 ACUs when cluster is idle?
+
+  SecondsUntilAutoPause:
+    Type: Number
+    AllowedValues:
+      - 300
+      - 600
+      - 1200
+      - 3600
+      - 14400
+      - 28800
+      - 86400
+    Default: 300
+    Description: >
+      The time, in seconds, before an Aurora DB cluster in serverless mode is paused (scale capacity
+      down to 0 ACU). Values are 5/10/20 minutes, 1/4/8/24 hours.
+
+  MinCapacity:
+    Type: Number
+    AllowedValues:
+      - 2
+      - 4
+      - 8
+      - 16
+      - 32
+      - 64
+      - 192
+      - 384
+    Default: 2
+    Description: >
+      The minimum capacity for an Aurora DB cluster in serverless DB engine mode.
+
+  MaxCapacity:
+    Type: Number
+    AllowedValues:
+      - 2
+      - 4
+      - 8
+      - 16
+      - 32
+      - 64
+      - 192
+      - 384
+    Default: 16
+    Description: >
+      The maximum capacity for an Aurora DB cluster in serverless DB engine mode. 
+      This value should be greater than or equal to MinCapacity. 
+
+  PrivateSubnet1CIDR:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.0.0/19
+    Description: CIDR block for private subnet 1 located in Availability Zone 1
+    Type: String
+  PrivateSubnet2CIDR:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.32.0/19
+    Description: CIDR block for private subnet 2 located in Availability Zone 2
+    Type: String
+  PublicSubnet1CIDR:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.128.0/20
+    Description: CIDR block for the public (DMZ) subnet 1 located in Availability
+      Zone 1
+    Type: String
+  PublicSubnet2CIDR:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.144.0/20
+    Description: CIDR block for the public (DMZ) subnet 2 located in Availability
+      Zone 2
+    Type: String
+  VPCCIDR:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.0.0/16
+    Description: CIDR block for the VPC
+    Type: String
+
+  AvailabilityZones:
+    Description: List of Availability Zones to use for the subnets in the VPC. Only
+      two Availability Zones are used for this deployment, and the logical order of
+      your selections is preserved.
+    Type: List<AWS::EC2::AvailabilityZone::Name>
+
+
+  QSS3BucketName:
+    AllowedPattern: "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$"
+    ConstraintDescription: "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+    Default: aws-quickstart
+    Description: "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+    Type: String
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: 'The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.'
+    Type: String
+  QSS3KeyPrefix:
+    AllowedPattern: "^[0-9a-zA-Z-/]*$"
+    ConstraintDescription: "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
+    Default: quickstart-salesforce-connect-appsync-rds-postgresql/
+    Description: "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
+    Type: String
+
+  DBInstanceClass:
+    Description: RDS Instance Class
+    Type: String
+    Default: db.t3.medium
+    AllowedValues:
+      - db.r5.large
+      - db.r5.xlarge
+      - db.r5.2xlarge
+      - db.r5.4xlarge
+      - db.r5.8xlarge
+      - db.t3.medium
+      - db.t3.large
+
+  DatabaseUserName:
+    Description: Database user name
+    Type: String
+    Default: dbadmin
+  DatabaseName:
+    Description: Database name
+    Type: String
+    Default: graphqlrds
+  DatabasePort:
+    Type: String
+    Default: 5432
+
+  MyOrderParameterName:
+    Description: My order parameter name
+    Type: String
+    Default: "/appsync/typemetadata/Graphqlsample_MyOrder"
+  MyOrderItemParameterName:
+    Description: My order item parameter name
+    Type: String
+    Default: "/appsync/typemetadata/Graphqlsample_MyOrderItem"
+  MyProductParameterName:
+    Description: My product parameter name
+    Type: String
+    Default: "/appsync/typemetadata/Graphqlsample_MyProduct"
+
+  AppSyncAuthenticationType:
+    Description: How do you want to authenticate to the AppSync endpoint?
+    Type: String
+    Default: API_KEY
+    AllowedValues:
+      - AWS_IAM
+      - API_KEY
+
+  GraphQLAdapterLocation:
+    Description: Provide the location of the JAR or ZIP file.
+    Type: String
+
+  GraphQLAdapterName:
+    Description: Adapter name
+    Type: String
+
+  GraphQLSchemaLocation:
+    Description: Provide the location of GraphQL schema.
+    Type: String
+
+  GraphQLSchemaName:
+    Description: GraphQL schema name.
+    Type: String
+
+  RDSSchemaLocation:
+    Description: Provide the location of RDS schema.
+    Type: String
+
+  RDSSchemaName:
+    Description: RDS Schema name
+    Type: String
+
+Conditions:
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
+
+Resources:
+  VPCStack:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL:
+        !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml
+        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+      Parameters:
+        AvailabilityZones: !Join
+          - ','
+          - !Ref AvailabilityZones
+        NumberOfAZs: '2'
+        PrivateSubnet1ACIDR: !Ref PrivateSubnet1CIDR
+        PrivateSubnet2ACIDR: !Ref PrivateSubnet2CIDR
+        PublicSubnet1CIDR: !Ref PublicSubnet1CIDR
+        PublicSubnet2CIDR: !Ref PublicSubnet2CIDR
+        VPCCIDR: !Ref VPCCIDR
+  ExistingVPCStack:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL:
+        !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/salesforce-connect-appsync-rds-postgresql-existing-vpc.template.yaml
+        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+      Parameters:
+        AvailabilityZones: !Join
+          - ','
+          - !Ref AvailabilityZones
+        VPCID: !GetAtt VPCStack.Outputs.VPCID
+        PrivateSubnet1ID: !GetAtt VPCStack.Outputs.PrivateSubnet1AID
+        PrivateSubnet2ID: !GetAtt VPCStack.Outputs.PrivateSubnet2AID
+        RDSClusterMode: !Ref RDSClusterMode
+        AutoPauseCluster: !Ref AutoPauseCluster
+        SecondsUntilAutoPause: !Ref SecondsUntilAutoPause
+        MinCapacity: !Ref MinCapacity
+        MaxCapacity: !Ref MaxCapacity
+        DBInstanceClass: !Ref DBInstanceClass
+        AppSyncAuthenticationType: !Ref AppSyncAuthenticationType
+        GraphQLAdapterLocation: !Ref GraphQLAdapterLocation
+        GraphQLAdapterName: !Ref GraphQLAdapterName
+        GraphQLSchemaLocation: !Ref GraphQLSchemaLocation
+        GraphQLSchemaName: !Ref GraphQLSchemaName
+        RDSSchemaLocation: !Ref RDSSchemaLocation
+        RDSSchemaName: !Ref RDSSchemaName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3BucketRegion: !Ref QSS3BucketRegion
+        DatabaseName: !Ref DatabaseName
+        DatabasePort: !Ref DatabasePort
+        DatabaseUserName: !Ref DatabaseUserName
+        MyOrderParameterName: !Ref MyOrderParameterName
+        MyOrderItemParameterName: !Ref MyOrderItemParameterName
+        MyProductParameterName: !Ref MyProductParameterName
