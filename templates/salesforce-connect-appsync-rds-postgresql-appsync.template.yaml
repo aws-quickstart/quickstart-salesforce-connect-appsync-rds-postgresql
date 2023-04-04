@@ -1,0 +1,199 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creates resources necessary for GraphQL RDS integration - with existing VPC (qs-1u21uotf3).
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: General configuration
+        Parameters:
+          - ArtifactsBucket
+      - Label:
+          default: AppSync configuration
+        Parameters:
+          - GraphQLSchemaName
+          - AppSyncLambdaRole
+          - AppSyncServiceRole
+          - AppSyncAuthenticationType
+          - RDSResolverLambdaVersion
+    ParameterLabels:
+      ArtifactsBucket:
+        default: Artifcats bucket
+      GraphQLSchemaName:
+        default: GraphQL Schema Name
+      AppSyncLambdaRole:
+        default: AppSync Lambda Role
+      AppSyncServiceRole:
+        default: AppSync Service Role
+      AppSyncAuthenticationType:
+        default: AppSync Authentication Type
+      RDSResolverLambdaVersion:
+        default: RDS Resolver Lambda Version
+
+Parameters:
+  ArtifactsBucket:
+    Type: String
+  GraphQLSchemaName:
+    Type: String
+  AppSyncLambdaRole:
+    Type: String
+  AppSyncServiceRole:
+    Type: String
+  AppSyncAuthenticationType:
+    Type: String
+  RDSResolverLambdaVersion:
+    Type: String
+
+Conditions:
+  AppSyncApiAuth: !Equals [ !Ref AppSyncAuthenticationType, "API_KEY" ]
+
+Resources:
+  AppSyncApi:
+    Type: AWS::AppSync::GraphQLApi
+    Properties:
+      Name: "Salesforce-Connect-AppSync-RDS-PostgreSQL"
+      AuthenticationType: !Ref AppSyncAuthenticationType
+      LogConfig:
+        CloudWatchLogsRoleArn: !Ref AppSyncServiceRole
+        ExcludeVerboseContent: FALSE
+        FieldLogLevel: ALL
+
+  AppSyncApiKey:
+    Type: AWS::AppSync::ApiKey
+    Condition: AppSyncApiAuth
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+
+  AppSyncSchema:
+    Type: AWS::AppSync::GraphQLSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DefinitionS3Location: !Sub "s3://${ArtifactsBucket}/${GraphQLSchemaName}"
+
+  AppSyncDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      Name: RDSResolvers
+      Description: RDS GraphQL Resolver Data Source
+      Type: AWS_LAMBDA
+      ServiceRoleArn: !Ref AppSyncLambdaRole
+      LambdaConfig:
+        LambdaFunctionArn: !Ref RDSResolverLambdaVersion
+
+  CreateMyOrderResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DataSourceName: !GetAtt AppSyncDataSource.Name
+      TypeName: Mutation
+      FieldName: create_Graphqlsample_MyOrder
+
+  CreateMyOrderItemResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DataSourceName: !GetAtt AppSyncDataSource.Name
+      TypeName: Mutation
+      FieldName: create_Graphqlsample_MyOrderItem
+
+  CreateMyProductResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DataSourceName: !GetAtt AppSyncDataSource.Name
+      TypeName: Mutation
+      FieldName: create_Graphqlsample_MyProduct
+
+  DeleteMyOrderResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DataSourceName: !GetAtt AppSyncDataSource.Name
+      TypeName: Mutation
+      FieldName: delete_Graphqlsample_MyOrder
+
+  DeleteMyOrderItemResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DataSourceName: !GetAtt AppSyncDataSource.Name
+      TypeName: Mutation
+      FieldName: delete_Graphqlsample_MyOrderItem
+
+  DeleteMyProductResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DataSourceName: !GetAtt AppSyncDataSource.Name
+      TypeName: Mutation
+      FieldName: delete_Graphqlsample_MyProduct
+
+  UpdateMyOrderResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DataSourceName: !GetAtt AppSyncDataSource.Name
+      TypeName: Mutation
+      FieldName: update_Graphqlsample_MyOrder
+
+  UpdateMyOrderItemResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DataSourceName: !GetAtt AppSyncDataSource.Name
+      TypeName: Mutation
+      FieldName: update_Graphqlsample_MyOrderItem
+
+  UpdateMyProductResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DataSourceName: !GetAtt AppSyncDataSource.Name
+      TypeName: Mutation
+      FieldName: update_Graphqlsample_MyProduct
+
+  QueryMyOrderResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DataSourceName: !GetAtt AppSyncDataSource.Name
+      TypeName: Query
+      FieldName: graphqlsample_MyOrder
+
+  QueryMyOrderItemResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DataSourceName: !GetAtt AppSyncDataSource.Name
+      TypeName: Query
+      FieldName: graphqlsample_MyOrderItem
+
+  QueryMyProductResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DataSourceName: !GetAtt AppSyncDataSource.Name
+      TypeName: Query
+      FieldName: graphqlsample_MyProduct
+
+  QueryNodeResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DataSourceName: !GetAtt AppSyncDataSource.Name
+      TypeName: Query
+      FieldName: node

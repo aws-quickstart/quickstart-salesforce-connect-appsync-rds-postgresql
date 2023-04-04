@@ -1,0 +1,256 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creates resources necessary for GraphQL RDS integration - with existing VPC (qs-1u21uotfb).
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Parameter store configuration
+        Parameters:
+          - MyOrderParameterName
+          - MyOrderItemParameterName
+          - MyProductParameterName
+    ParameterLabels:
+      MyOrderParameterName:
+        default: My order parameter name
+      MyOrderItemParameterName:
+        default: My order item parameter name
+      MyProductParameterName:
+        default: My product parameter name
+
+Parameters:
+  MyOrderParameterName:
+    Description: My order parameter name
+    Type: String
+    Default: "/appsync/typemetadata/Graphqlsample_MyOrder"
+  MyOrderItemParameterName:
+    Description: My order item parameter name
+    Type: String
+    Default: "/appsync/typemetadata/Graphqlsample_MyOrderItem"
+  MyProductParameterName:
+    Description: My product parameter name
+    Type: String
+    Default: "/appsync/typemetadata/Graphqlsample_MyProduct"
+
+Resources:
+  ArtifactsBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      AccessControl: LogDeliveryWrite
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  ArtifactsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ArtifactsBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - "s3:*"
+            Effect: "Deny"
+            Principal: "*"
+            Resource:
+              - !GetAtt ArtifactsBucket.Arn
+              - !Sub "${ArtifactsBucket.Arn}/*"
+            Condition:
+              Bool:
+                "aws:SecureTransport": false
+
+  ArtifactsBucketDeleteLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:DeleteBucket
+                  - s3:ListBucket
+                  - s3:ListBucketVersions
+                  - s3:DeleteObject
+                  - s3:DeleteObjectVersion
+                Resource:
+                  - !Sub "arn:${AWS::Partition}:s3:::${ArtifactsBucket}"
+                  - !Sub "arn:${AWS::Partition}:s3:::${ArtifactsBucket}/*"
+          PolicyName: ArtifactDeleteS3BucketPolicy
+
+  ArtifactsBucketDeleteLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: "index.lambda_handler"
+      Runtime: python3.9
+      MemorySize: 128
+      Timeout: 120
+      Role: !GetAtt ArtifactsBucketDeleteLambdaRole.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          import cfnresponse
+          def deleteS3Bucket(bucketName):
+             print("Deleting S3 Bucket %s" % bucketName)
+             bucket = boto3.resource("s3").Bucket(bucketName)
+             bucket.object_versions.all().delete()
+             bucket.delete()
+          def lambda_handler(event, context):
+            print(event)
+            responseData = {}
+            status = cfnresponse.SUCCESS
+            reason = "Success"
+            if event['RequestType'] == 'Delete':
+              try:
+                deleteS3Bucket(event['ResourceProperties']['BucketName'])
+              except Exception as e:
+                print(e)
+                reason = f"Exception thrown: {e}"
+                status = cfnresponse.FAILED
+            cfnresponse.send(event, context, status, responseData, reason=reason)
+
+  CleanupArtifactsBucket:
+    Type: Custom::CleanupArtifactsBucket
+    Properties:
+      ServiceToken: !GetAtt ArtifactsBucketDeleteLambda.Arn
+      BucketName: !Ref ArtifactsBucket
+
+  RDSSecretsKey:
+    Type: AWS::KMS::Key
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks:
+            - EIAMPolicyWildcardResource
+            - EIAMPolicyActionWildcard
+          ignore_reasons:
+            EIAMPolicyWildcardResource: >-
+              This is based on AWS documentation- Delegates managing key
+              to the admin by giving full access to the AWS account (root).
+            EIAMPolicyActionWildcard: >-
+              This is based on AWS documentation- Delegates managing key
+              to the admin by giving full access to the AWS account (root).
+    Properties:
+      Description: An symmetric CMK for Secrets Manager
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: "2012-10-17"
+        Id: keyForSecrets
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS: !Sub "arn:aws:iam::${AWS::AccountId}:root"
+            Action: kms:*
+            Resource: "*"
+
+  RDSSecret:
+    Type: "AWS::SecretsManager::Secret"
+    Properties:
+      Description: Generates random value for db password and stores in secrets manager
+      KmsKeyId: !Ref RDSSecretsKey
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "dbadmin", "databaseName": "graphqlrds", "vendor": "PostgreSQL", "port": "5432", "host": " "}'
+        GenerateStringKey: "password"
+        PasswordLength: 20
+        ExcludeCharacters: "\"@/\\;.:+' %"
+
+  MyOrderParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Ref MyOrderParameterName
+      Type: String
+      Value: !Sub
+        - |
+          {
+            "secretName":"${SecretName}", 
+              "secretRegion": "${AWS::Region}",
+              "fieldTypes": {
+                "OrderId": "String",
+                "OrderDate": "AWSDateTime",
+                "Status": "String",
+                "TotalCost": "Float",
+                "SourceIpAddress": "AWSIPAddress" 
+              },
+              "keyColumns": ["OrderId"]
+            }
+        - {
+          SecretName: !Ref RDSSecret
+        }
+
+  MyOrderItemParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Ref MyOrderItemParameterName
+      Type: String
+      Value: !Sub
+        - |
+          {
+            "secretName":"${SecretName}", 
+            "secretRegion": "${AWS::Region}",
+            "fieldTypes": {
+               "ParentOrderId": "String",
+               "ParentProductId": "String",
+               "Quantity": "Int" 
+            },
+            "keyColumns": ["ParentOrderId", "ParentProductId"]
+          }
+        - {
+          SecretName: !Ref RDSSecret
+        }
+
+  MyProductParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Ref MyProductParameterName
+      Type: String
+      Value: !Sub
+        - |
+          {
+            "secretName":"${SecretName}", 
+              "secretRegion": "${AWS::Region}",
+              "fieldTypes": {
+                "ProductId": "String",
+                "Name": "String",
+                "Price": "Float",
+                "Discontinued": "Boolean"
+              },
+              "keyColumns": ["ProductId"]
+          }
+        - {
+          SecretName: !Ref RDSSecret
+        }
+
+Outputs:
+  ArtifactsBucket:
+    Value: !Ref ArtifactsBucket
+  MyOrderParameter:
+    Value: !Ref MyOrderParameter
+  MyOrderItemParameter:
+    Value: !Ref MyOrderItemParameter
+  MyProductParameter:
+    Value: !Ref MyProductParameter
+  RDSSecretsKey:
+    Value: !GetAtt RDSSecretsKey.Arn
+  RDSSecret:
+    Value: !Ref RDSSecret
