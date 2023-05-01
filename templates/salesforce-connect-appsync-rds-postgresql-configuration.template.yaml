@@ -39,7 +39,6 @@ Resources:
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Properties:
-      AccessControl: LogDeliveryWrite
       VersioningConfiguration:
         Status: Enabled
       PublicAccessBlockConfiguration:
@@ -254,3 +253,4 @@ Outputs:
     Value: !GetAtt RDSSecretsKey.Arn
   RDSSecret:
     Value: !Ref RDSSecret
+
