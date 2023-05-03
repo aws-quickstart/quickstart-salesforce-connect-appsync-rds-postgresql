@@ -1,0 +1,62 @@
+{
+  "databaseTableName": "resolver_testing_types.types_test",
+  "keyFields": ["TableId"],
+  "graphQLFields": {
+    "TableId": {
+      "fieldType": "Int",
+      "columnName": "table_id"
+    },
+    "IntField": {
+      "fieldType": "Int",
+      "columnName": "int_field"
+    },
+    "FloatField": {
+      "fieldType": "Float",
+      "columnName": "float_field"
+    },
+    "StringField": {
+      "fieldType": "String",
+      "columnName": "string_field"
+    },
+    "BooleanField": {
+      "fieldType": "Boolean",
+      "columnName": "boolean_field"
+    },
+    "DateField": {
+      "fieldType": "AWSDate",
+      "columnName": "date_field"
+    },
+    "TimeField": {
+      "fieldType": "AWSTime",
+      "columnName": "time_field"
+    },
+    "DateTimeField": {
+      "fieldType": "AWSDateTime",
+      "columnName": "date_time_field"
+    },
+    "EpochField": {
+      "fieldType": "AWSTimestamp",
+      "columnName": "epoch_field"
+    },
+    "EmailField": {
+      "fieldType": "AWSEmail",
+      "columnName": "email_field"
+    },
+    "PhoneField": {
+      "fieldType": "AWSPhone",
+      "columnName": "phone_field"
+    },
+    "UrlField": {
+      "fieldType": "AWSURL",
+      "columnName": "url_field"
+    },
+    "JsonField": {
+      "fieldType": "AWSJSON",
+      "columnName": "json_field"
+    },
+    "IpAddressField": {
+      "fieldType": "AWSIPAddress",
+      "columnName": "ip_address_field"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "arguments": {
+    "id": "WrongSchema_WrongObject-ORD\\-100-PRD\\-427487"
+  },
+  "info": {
+    "fieldName": "delete_ResolverTestingOrderProductOrderItem_MyOrderItem",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "ParentOrderId",
+      "ParentProductId",
+      "Quantity"
+    ]
+  }
+}

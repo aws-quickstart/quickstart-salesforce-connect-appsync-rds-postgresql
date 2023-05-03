@@ -1,0 +1,3 @@
+{
+  "expectedErrorMessage": "SystemsManager parameter for ExpectedFail_MissingFieldTypes must define fieldType in 'graphQLFields' property"
+}

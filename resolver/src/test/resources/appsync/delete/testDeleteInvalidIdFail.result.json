@@ -1,0 +1,3 @@
+{
+  "expectedErrorMessage": "unable to parse global id value ResolverTestingOrderProductOrderItem_MyOrderItem-blahblahblah. expected it to be in the form: ResolverTestingOrderProductOrderItem_MyOrderItem-ParentOrderId-ParentProductId. dashes should be escaped with '\\'"
+}

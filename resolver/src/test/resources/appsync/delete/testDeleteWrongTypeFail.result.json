@@ -1,0 +1,3 @@
+{
+  "expectedErrorMessage": "expected id for ResolverTestingOrderProductOrderItem_MyOrderItem, got: WrongSchema_WrongObject-ORD\\-100-PRD\\-427487"
+}

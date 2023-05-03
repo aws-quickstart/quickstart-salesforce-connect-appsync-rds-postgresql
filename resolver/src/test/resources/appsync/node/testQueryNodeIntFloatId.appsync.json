@@ -1,0 +1,12 @@
+{
+    "arguments": {
+        "id": "ResolverTestingGlobalIdTypes_IntFloat-1-2.5"
+    },
+    "info": {
+        "selectionSetList": [],
+        "selectionSetGraphQL": "{\n  ... on ResolverTestingGlobalIdTypes_IntFloat {\n    id\n    IntId\n    FloatId\n  }\n  \n}",
+        "fieldName": "node",
+        "parentTypeName": "Query",
+        "variables": {}
+    }
+}

@@ -1,0 +1,1 @@
+DROP USER resolver_testing_data_type_mismatch cascade;

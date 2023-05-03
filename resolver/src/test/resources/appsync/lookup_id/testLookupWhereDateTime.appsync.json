@@ -1,0 +1,14 @@
+{
+  "arguments": {"where": {"ParentDateTime": {"eq": "ResolverTestingGlobalIdTypes_DateTime-2021\\-06\\-11-12:13:14-2022\\-03\\-04T01:02:03Z"}}},
+  "info": {
+    "fieldName": "resolverTestingGlobalIdTypes_LookupTable",
+    "parentTypeName": "Query",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/id",
+      "edges/node/ParentDateTime"
+    ]
+  }
+}

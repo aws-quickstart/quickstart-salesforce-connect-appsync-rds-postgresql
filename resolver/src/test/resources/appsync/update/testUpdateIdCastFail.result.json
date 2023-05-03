@@ -1,0 +1,3 @@
+{
+  "expectedErrorMessage": "could not parse GraphQL INT input with value string"
+}

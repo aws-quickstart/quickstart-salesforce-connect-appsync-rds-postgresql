@@ -1,0 +1,17 @@
+{
+  "arguments": {
+    "input": {
+      "DateId": "1997-06-06",
+      "TimeId": "10:00:15",
+      "DateTimeId": "2026-05-10T13:14:15Z"
+    }
+  },
+  "info": {
+    "fieldName": "create_ResolverTestingGlobalIdTypes_DateTime",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "id"
+    ]
+  }
+}

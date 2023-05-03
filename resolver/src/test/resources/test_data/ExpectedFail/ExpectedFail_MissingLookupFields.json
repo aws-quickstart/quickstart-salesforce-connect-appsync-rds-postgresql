@@ -1,0 +1,23 @@
+{
+  "graphQLFields": {
+    "ParentOrderId": {
+      "fieldType": "String",
+      "columnName": "parent_order_id"
+    },
+    "ParentProductId": {
+      "fieldType": "String",
+      "columnName": "parent_product_id"
+    },
+    "Quantity": {
+      "fieldType": "Int",
+      "columnName": "quantity"
+    }
+  },
+  "keyFields": ["ParentOrderId", "ParentProductId"],
+  "lookupFields": {
+    "WrongLookup": {
+      "type": "WrongSchema_WrongType",
+      "keyFields": ["NotIt"]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "arguments": {
+    "input": {
+      "TableId": 5,
+      "IntField": null,
+      "FloatField": null,
+      "BooleanField": null,
+      "StringField": null,
+      "DateField": null,
+      "TimeField": null,
+      "DateTimeField": null,
+      "EpochField": null,
+      "EmailField": null,
+      "PhoneField": null,
+      "UrlField": null,
+      "JsonField": null
+    }
+  },
+  "info": {
+    "fieldName": "create_ResolverTestingTypes_TypesTest",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "TableId",
+      "EpochField",
+      "JsonField"
+    ]
+  }
+}

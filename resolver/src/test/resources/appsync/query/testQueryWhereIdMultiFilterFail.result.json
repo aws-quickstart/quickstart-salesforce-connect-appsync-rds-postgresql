@@ -1,0 +1,3 @@
+{
+  "expectedErrorMessage": "filter should only have one operator, got: {eq=ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-100, ne=shouldn't be here}"
+}

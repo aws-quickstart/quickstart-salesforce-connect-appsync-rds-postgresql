@@ -1,0 +1,22 @@
+{
+  "databaseTableName": "resolver_testing_global_id_types.date_time",
+  "keyFields": [
+    "DateId",
+    "TimeId",
+    "DateTimeId"
+  ],
+  "graphQLFields": {
+    "DateId": {
+      "fieldType": "AWSDate",
+      "columnName": "date_id"
+    },
+    "TimeId": {
+      "fieldType": "AWSTime",
+      "columnName": "time_id"
+    },
+    "DateTimeId": {
+      "fieldType": "AWSDateTime",
+      "columnName": "date_time_id"
+    }
+  }
+}

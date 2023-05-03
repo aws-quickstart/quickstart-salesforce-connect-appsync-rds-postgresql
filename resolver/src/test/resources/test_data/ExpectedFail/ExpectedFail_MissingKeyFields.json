@@ -1,0 +1,20 @@
+{
+  "graphQLFields": {
+    "OrderId": {
+      "fieldType": "String",
+      "columnName": "order_id"
+    },
+    "OrderDate": {
+      "fieldType": "AWSDateTime",
+      "columnName": "order_date"
+    },
+    "Status": {
+      "fieldType": "String",
+      "columnName": "status"
+    },
+    "TotalCost": {
+      "fieldType": "Float",
+      "columnName": "total_cost"
+    }
+  }
+}

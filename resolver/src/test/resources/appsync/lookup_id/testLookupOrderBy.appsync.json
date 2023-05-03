@@ -1,0 +1,17 @@
+{
+  "arguments": {
+    "orderBy": [
+      {"ParentProduct": {"direction": "DESC"}}
+    ]
+  },
+  "info": {
+    "fieldName": "resolverTestingOrderProductOrderItem_MyOrderItem",
+    "parentTypeName": "Query",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/ParentProduct"
+    ]
+  }
+}

@@ -1,0 +1,3 @@
+{
+  "expectedErrorMessage": "no-op updates are not allowed, at least one field to update must be specified"
+}

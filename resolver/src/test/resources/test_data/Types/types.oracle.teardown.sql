@@ -1,0 +1,1 @@
+DROP USER resolver_testing_types CASCADE;

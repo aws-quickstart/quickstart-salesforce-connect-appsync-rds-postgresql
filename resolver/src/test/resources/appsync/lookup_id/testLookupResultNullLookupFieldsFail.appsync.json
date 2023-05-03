@@ -1,0 +1,15 @@
+{
+  "arguments": {},
+  "info": {
+    "fieldName": "resolverTestingExpectedFail_NullLookupFields",
+    "parentTypeName": "Query",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/id",
+      "edges/node/ParentOrderId",
+      "edges/node/ParentOrder"
+    ]
+  }
+}

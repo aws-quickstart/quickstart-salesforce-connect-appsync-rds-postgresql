@@ -1,0 +1,40 @@
+{
+  "arguments": {
+    "where": {
+      "StringField": {"eq": null},
+      "IntField": {"eq": null},
+      "FloatField": {"eq": null},
+      "BooleanField": {"eq": null},
+      "DateField": {"eq": null},
+      "TimeField": {"eq": null},
+      "DateTimeField": {"eq": null},
+      "EpochField": {"eq": null},
+      "EmailField": {"eq": null},
+      "PhoneField": {"eq": null},
+      "UrlField": {"eq": null},
+      "JsonField": {"eq": null}
+    }
+  },
+  "info": {
+    "fieldName": "resolverTestingTypes_TypesTest",
+    "parentTypeName": "Query",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/TableId",
+      "edges/node/IntField",
+      "edges/node/FloatField",
+      "edges/node/StringField",
+      "edges/node/BooleanField",
+      "edges/node/DateField",
+      "edges/node/TimeField",
+      "edges/node/DateTimeField",
+      "edges/node/EpochField",
+      "edges/node/EmailField",
+      "edges/node/PhoneField",
+      "edges/node/UrlField",
+      "edges/node/JsonField"
+    ]
+  }
+}

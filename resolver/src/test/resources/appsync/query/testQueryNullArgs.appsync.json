@@ -1,0 +1,21 @@
+{
+  "arguments": {
+    "limit": null,
+    "offset": null,
+    "where": null,
+    "orderBy": null
+  },
+  "info": {
+    "fieldName": "resolverTestingOrderProductOrderItem_MyOrder",
+    "parentTypeName": "Query",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/OrderId",
+      "edges/node/OrderDate",
+      "edges/node/Status",
+      "edges/node/TotalCost"
+    ]
+  }
+}

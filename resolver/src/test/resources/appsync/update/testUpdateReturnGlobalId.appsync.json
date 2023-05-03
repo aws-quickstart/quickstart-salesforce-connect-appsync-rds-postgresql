@@ -1,0 +1,16 @@
+{
+  "arguments": {
+    "input": {
+      "id": "ResolverTestingGlobalIdTypes_DateTime-2020\\-05\\-10-11:12:13-2021\\-02\\-03T01:02:03Z",
+      "DateId": "1997-06-06"
+    }
+  },
+  "info": {
+    "fieldName": "update_ResolverTestingGlobalIdTypes_DateTime",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "id"
+    ]
+  }
+}

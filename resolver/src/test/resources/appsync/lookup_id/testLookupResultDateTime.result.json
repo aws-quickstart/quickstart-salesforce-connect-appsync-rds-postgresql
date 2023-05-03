@@ -1,0 +1,8 @@
+{
+  "expectedResultMulti": [
+    {
+      "ParentDateTime": "ResolverTestingGlobalIdTypes_DateTime-2021\\-06\\-11-12:13:14-2022\\-03\\-04T01:02:03Z",
+      "id": "ResolverTestingGlobalIdTypes_LookupTable-3-4.5-2021\\-06\\-11-12:13:14-2022\\-03\\-04T01:02:03Z"
+    }
+  ]
+}

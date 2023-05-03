@@ -1,0 +1,36 @@
+{
+  "expectedResultMulti": [
+    {
+      "TableId": 1,
+      "IntField": 2,
+      "FloatField": 1.5,
+      "StringField": "my_string",
+      "BooleanField": true,
+      "DateField": "2022-05-05",
+      "TimeField": "10:00:15",
+      "DateTimeField": "2022-05-05T10:00:20.123Z",
+      "EpochField": 1666761185,
+      "EmailField": "johndoe@notrealemail.com",
+      "PhoneField": "8085554444",
+      "UrlField": "https://google.com",
+      "JsonField": {"test": "json"},
+      "IpAddressField": "192.168.0.1"
+    },
+    {
+      "TableId": 2,
+      "IntField": null,
+      "FloatField": null,
+      "StringField": null,
+      "BooleanField": null,
+      "DateField": null,
+      "TimeField": null,
+      "DateTimeField": null,
+      "EpochField": null,
+      "EmailField": null,
+      "PhoneField": null,
+      "UrlField": null,
+      "JsonField": null,
+      "IpAddressField": null
+    }
+  ]
+}

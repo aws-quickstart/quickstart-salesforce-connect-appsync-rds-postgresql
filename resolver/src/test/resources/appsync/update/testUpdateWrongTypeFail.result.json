@@ -1,0 +1,3 @@
+{
+  "expectedErrorMessage": "expected id for ResolverTestingOrderProductOrderItem_MyOrder, got: ResolverTestingOrderProductOrderItem_MyProduct-PRD\\-100"
+}

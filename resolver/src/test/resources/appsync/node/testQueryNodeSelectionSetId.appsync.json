@@ -1,0 +1,12 @@
+{
+    "arguments": {
+        "id": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-100"
+    },
+    "info": {
+        "selectionSetList": ["id"],
+        "selectionSetGraphQL": "{\n  id\n  ... on ResolverTestingOrderProductOrderItem_MyOrder {\n    OrderId\n    OrderDate\n    Status\n    TotalCost\n  }\n  \n}",
+        "fieldName": "node",
+        "parentTypeName": "Query",
+        "variables": {}
+    }
+}

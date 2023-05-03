@@ -1,0 +1,18 @@
+{
+  "expectedResultMulti": [
+    {
+      "OrderId": "ORD-100",
+      "OrderDate": "2020-05-10T10:10:01Z",
+      "Status": "shipped",
+      "TotalCost": 500.55,
+      "id": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-100"
+    },
+    {
+      "OrderId": "ORD-101",
+      "OrderDate": "2020-05-10T10:11:01Z",
+      "Status": "shipped",
+      "TotalCost": 520.55,
+      "id": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-101"
+    }
+  ]
+}
