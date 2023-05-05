@@ -13,7 +13,14 @@ As shown in <<architecture1>>, this Partner Solution sets up the following:
 
 * A highly available architecture that spans two Availability Zones.*
 * A virtual private cloud (VPC) configured with public and private subnets, according to AWS
-best practices, to provide you with your own virtual network on AWS.*
+best practices, to provide you with your own virtual network on AWS. VPC Endpoints for communication with services outside the VPC.*
+* An Amazon RDS cluster in the VPC, with an option to choose between Amazon Aurora PostgreSQL and Amazon Aurora Serverless.*
+* AWS AppSync with a public endpoint, to be called from Salesforce.*
+* AWS Lambda containing the resolver, to query Amazon RDS.*
+* Amazon S3 bucket to store artifacts, AWS Secrets Manager to store credentials for Amazon RDS, and AWS Systems Manager Parameter Store for storing parameters.*
+
+
+
 * In the public subnets:
 ** Managed network address translation (NAT) gateways to allow outbound
 internet access for resources in the private subnets.*
