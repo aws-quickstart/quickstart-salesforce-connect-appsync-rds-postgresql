@@ -1,0 +1,16 @@
+{
+  "arguments": {
+    "input": {
+      "IntId": 20,
+      "FloatId": 35.555
+    }
+  },
+  "info": {
+    "fieldName": "create_ResolverTestingGlobalIdTypes_IntFloat",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "id"
+    ]
+  }
+}

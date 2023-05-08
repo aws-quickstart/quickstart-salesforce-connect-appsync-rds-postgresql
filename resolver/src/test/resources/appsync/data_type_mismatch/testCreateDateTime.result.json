@@ -1,0 +1,7 @@
+{
+  "expectedResultSingular": {
+    "DateTimeNoTz": "1999-10-11T12:13:14Z",
+    "DateTimeTz": "2030-01-02T04:05:06Z",
+    "id": "ResolverTestingDataTypeMismatch_DateTime-5"
+  }
+}

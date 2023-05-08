@@ -1,0 +1,1 @@
+DROP SCHEMA resolver_testing_global_id_types CASCADE;

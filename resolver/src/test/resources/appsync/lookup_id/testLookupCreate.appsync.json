@@ -1,0 +1,21 @@
+{
+  "arguments": {
+    "input": {
+      "ParentOrder": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-100", 
+      "ParentProduct": "ResolverTestingOrderProductOrderItem_MyProduct-PRD\\-305"
+    }
+  },
+  "info": {
+    "fieldName": "create_ResolverTestingOrderProductOrderItem_MyOrderItem",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/ParentOrderId",
+      "edges/node/ParentOrder",
+      "edges/node/ParentProductId",
+      "edges/node/ParentProduct"
+    ]
+  }
+}

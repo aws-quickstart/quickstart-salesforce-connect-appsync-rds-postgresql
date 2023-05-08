@@ -1,0 +1,15 @@
+{
+  "arguments": {"where": {"ParentOrder": {"eq": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-100"}}},
+  "info": {
+    "fieldName": "resolverTestingOrderProductOrderItem_MyOrderItem",
+    "parentTypeName": "Query",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/id",
+      "edges/node/ParentOrderId",
+      "edges/node/ParentOrder"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "expectedResultMulti": [
+    {
+      "TableId": 2,
+      "IntField": null,
+      "FloatField": null,
+      "StringField": null,
+      "BooleanField": null,
+      "DateField": null,
+      "TimeField": null,
+      "DateTimeField": null,
+      "EpochField": null,
+      "EmailField": null,
+      "PhoneField": null,
+      "UrlField": null,
+      "JsonField": null
+    }
+  ]
+}

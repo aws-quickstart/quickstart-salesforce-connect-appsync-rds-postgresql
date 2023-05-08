@@ -1,0 +1,3 @@
+{
+  "expectedErrorMessage": "global ID/lookup filter only supports 'eq' and 'in' filter, got: {ne=ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-100}"
+}

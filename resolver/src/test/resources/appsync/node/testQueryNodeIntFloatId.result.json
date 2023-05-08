@@ -1,0 +1,8 @@
+{
+  "expectedResultSingular": {
+    "IntId": 1,
+    "FloatId": 2.5,
+    "id": "ResolverTestingGlobalIdTypes_IntFloat-1-2.5",
+    "__typename": "ResolverTestingGlobalIdTypes_IntFloat"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "databaseTableName": "resolver_testing_order_product_order_item.my_order_item",
+  "keyFields": ["ParentOrderId", "ParentProductId"],
+  "lookupInfos": {
+    "ParentOrder": {
+      "type": "ResolverTestingOrderProductOrderItem_MyOrder",
+      "keyFields": ["ParentOrderId"]
+    },
+    "ParentProduct": {
+      "type": "ResolverTestingOrderProductOrderItem_MyProduct",
+      "keyFields": ["ParentProductId"]
+    }
+  },
+  "graphQLFields": {
+    "ParentOrderId": {
+      "fieldType": "String",
+      "columnName": "parent_order_id"
+    },
+    "ParentProductId": {
+      "fieldType": "String",
+      "columnName": "parent_product_id"
+    },
+    "Quantity": {
+      "fieldType": "Int",
+      "columnName": "quantity"
+    }
+  }
+}

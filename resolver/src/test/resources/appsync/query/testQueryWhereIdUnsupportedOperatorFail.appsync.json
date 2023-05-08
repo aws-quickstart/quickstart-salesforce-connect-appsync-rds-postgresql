@@ -1,0 +1,21 @@
+{
+  "arguments": {
+    "where": {
+      "id": {"ne": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-100"}
+    }
+  },
+  "info": {
+    "fieldName": "resolverTestingOrderProductOrderItem_MyOrder",
+    "parentTypeName": "Query",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/id",
+      "edges/node/OrderId",
+      "edges/node/OrderDate",
+      "edges/node/Status",
+      "edges/node/TotalCost"
+    ]
+  }
+}

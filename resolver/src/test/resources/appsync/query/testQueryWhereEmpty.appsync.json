@@ -1,0 +1,28 @@
+{
+  "arguments": {
+    "where": {}
+  },
+  "info": {
+    "fieldName": "resolverTestingTypes_TypesTest",
+    "parentTypeName": "Query",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/TableId",
+      "edges/node/IntField",
+      "edges/node/FloatField",
+      "edges/node/StringField",
+      "edges/node/BooleanField",
+      "edges/node/DateField",
+      "edges/node/TimeField",
+      "edges/node/DateTimeField",
+      "edges/node/EpochField",
+      "edges/node/EmailField",
+      "edges/node/PhoneField",
+      "edges/node/UrlField",
+      "edges/node/JsonField",
+      "edges/node/IpAddressField"
+    ]
+  }
+}

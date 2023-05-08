@@ -1,0 +1,16 @@
+{
+  "arguments": {
+    "input": {
+      "id": "ResolverTestingOrderProductOrderItem_MyProduct-PRD\\-100",
+      "Status": "delivered"
+    }
+  },
+  "info": {
+    "selectionSetList": [
+      "Status"
+    ],
+    "fieldName": "update_ResolverTestingOrderProductOrderItem_MyOrder",
+    "parentTypeName": "Mutation",
+    "variables": {}
+  }
+}

@@ -1,0 +1,2 @@
+DROP TABLE resolver_testing_special__name.multi___underscores;
+DROP SCHEMA resolver_testing_special__name;

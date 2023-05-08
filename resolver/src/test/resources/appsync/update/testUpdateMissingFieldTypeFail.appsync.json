@@ -1,0 +1,16 @@
+{
+  "arguments": {
+    "input": {
+      "id": "ExpectedFail_MissingFieldTypes-100",
+      "StringField": "newvalue"
+    }
+  },
+  "info": {
+    "fieldName": "update_ExpectedFail_MissingFieldTypes",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "StringField"
+    ]
+  }
+}

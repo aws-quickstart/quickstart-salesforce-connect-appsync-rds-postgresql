@@ -1,0 +1,48 @@
+{
+  "expectedResultMulti": [
+    {
+      "ProductId": "PRD-308",
+      "Price": null
+    },
+    {
+      "ProductId": "PRD-309",
+      "Price": 100.00
+    },
+    {
+      "ProductId": "PRD-307",
+      "Price": 80.00
+    },
+    {
+      "ProductId": "PRD-306",
+      "Price": 70.00
+    },
+    {
+      "ProductId": "PRD-305",
+      "Price": 60.00
+    },
+    {
+      "ProductId": "PRD-299",
+      "Price": 50.00
+    },
+    {
+      "ProductId": "PRD-304",
+      "Price": 50.00
+    },
+    {
+      "ProductId": "PRD-303",
+      "Price": 40.00
+    },
+    {
+      "ProductId": "PRD-302",
+      "Price": 30.00
+    },
+    {
+      "ProductId": "PRD-301",
+      "Price": 20.00
+    },
+    {
+      "ProductId": "PRD-300",
+      "Price": 10.00
+    }
+  ]
+}

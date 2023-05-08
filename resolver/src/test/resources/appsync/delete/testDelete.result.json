@@ -1,0 +1,7 @@
+{
+  "expectedResultSingular": {
+    "ParentOrderId": "ORD-100",
+    "ParentProductId": "PRD-300",
+    "Quantity": 10
+  }
+}

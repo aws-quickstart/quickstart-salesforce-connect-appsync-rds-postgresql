@@ -1,0 +1,12 @@
+{
+  "arguments": {
+    "id": "ExpectedFail_MissingKeyFields-ORD\\-100"
+  },
+  "info": {
+    "selectionSetList": [],
+    "selectionSetGraphQL": "{\n  ... on ExpectedFail_MissingKeyFields {\n    id\n    OrderId\n    OrderDate\n    Status\n    TotalCost\n  }\n  \n}",
+    "fieldName": "node",
+    "parentTypeName": "Query",
+    "variables": {}
+  }
+}

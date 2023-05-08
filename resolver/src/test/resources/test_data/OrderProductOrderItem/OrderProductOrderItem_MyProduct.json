@@ -1,0 +1,22 @@
+{
+  "keyFields": ["ProductId"],
+  "databaseTableName": "resolver_testing_order_product_order_item.my_product",
+  "graphQLFields": {
+    "Name": {
+      "fieldType": "String",
+      "columnName": "name"
+    },
+    "Price": {
+      "fieldType": "Float",
+      "columnName": "price"
+    },
+    "Discontinued": {
+      "fieldType": "Boolean",
+      "columnName": "discontinued"
+    },
+    "ProductId": {
+      "fieldType": "String",
+      "columnName": "product_id"
+    }
+  }
+}

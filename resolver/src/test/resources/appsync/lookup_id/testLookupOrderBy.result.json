@@ -1,0 +1,34 @@
+{
+  "expectedResultMulti": [
+    {
+      "ParentProduct": "ResolverTestingOrderProductOrderItem_MyProduct-PRD\\-309"
+    },
+    {
+      "ParentProduct": "ResolverTestingOrderProductOrderItem_MyProduct-PRD\\-308"
+    },
+    {
+      "ParentProduct": "ResolverTestingOrderProductOrderItem_MyProduct-PRD\\-307"
+    },
+    {
+      "ParentProduct": "ResolverTestingOrderProductOrderItem_MyProduct-PRD\\-306"
+    },
+    {
+      "ParentProduct": "ResolverTestingOrderProductOrderItem_MyProduct-PRD\\-305"
+    },
+    {
+      "ParentProduct": "ResolverTestingOrderProductOrderItem_MyProduct-PRD\\-304"
+    },
+    {
+      "ParentProduct": "ResolverTestingOrderProductOrderItem_MyProduct-PRD\\-303"
+    },
+    {
+      "ParentProduct": "ResolverTestingOrderProductOrderItem_MyProduct-PRD\\-302"
+    },
+    {
+      "ParentProduct": "ResolverTestingOrderProductOrderItem_MyProduct-PRD\\-301"
+    },
+    {
+      "ParentProduct": "ResolverTestingOrderProductOrderItem_MyProduct-PRD\\-300"
+    }
+  ]
+}
