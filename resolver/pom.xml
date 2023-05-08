@@ -19,7 +19,7 @@
         <com.google.guava.version>31.1-jre</com.google.guava.version>
         <com.google.code.gson>2.10</com.google.code.gson>
         
-        <org.postgresql.version>42.5.0</org.postgresql.version>
+        <org.postgresql.version>42.5.1</org.postgresql.version>
         <com.oracle.database.jdbc.version>21.7.0.0</com.oracle.database.jdbc.version>
         <com.microsoft.jdbc.version>11.2.1.jre11</com.microsoft.jdbc.version>
     </properties>
