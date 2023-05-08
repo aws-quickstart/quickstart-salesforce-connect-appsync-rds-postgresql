@@ -1,0 +1,19 @@
+{
+  "arguments": {
+    "input": {
+      "IntId": 5,
+      "DateTimeNoTz": "1999-10-11T12:13:14Z",
+      "DateTimeTz": "2030-01-02T04:05:06Z"
+    }
+  },
+  "info": {
+    "fieldName": "create_ResolverTestingDataTypeMismatch_DateTime",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "DateTimeNoTz",
+      "DateTimeTz",
+      "id"
+    ]
+  }
+}

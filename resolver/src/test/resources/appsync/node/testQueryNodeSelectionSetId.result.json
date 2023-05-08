@@ -1,0 +1,10 @@
+{
+  "expectedResultSingular": {
+    "OrderId": "ORD-100",
+    "OrderDate": "2020-05-10T10:10:01Z",
+    "Status": "shipped", 
+    "TotalCost": 500.55, 
+    "id": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-100",
+    "__typename": "ResolverTestingOrderProductOrderItem_MyOrder"
+  }
+}

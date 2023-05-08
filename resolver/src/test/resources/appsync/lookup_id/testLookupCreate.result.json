@@ -1,0 +1,8 @@
+{
+  "expectedResultSingular": {
+    "ParentOrderId": "ORD-100",
+    "ParentProductId": "PRD-305",
+    "ParentOrder": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-100",
+    "ParentProduct": "ResolverTestingOrderProductOrderItem_MyProduct-PRD\\-305"
+  }
+}

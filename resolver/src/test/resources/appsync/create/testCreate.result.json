@@ -1,0 +1,10 @@
+{
+  "expectedResultSingular": {
+    "TableId": 5,
+    "FloatField": 6.5,
+    "TimeField": "12:00:15.123",
+    "DateTimeField": "2024-05-05T10:00:20.456Z",
+    "JsonField": {"other": "jsoned"},
+    "IpAddressField": "192.168.0.1"
+  }
+}

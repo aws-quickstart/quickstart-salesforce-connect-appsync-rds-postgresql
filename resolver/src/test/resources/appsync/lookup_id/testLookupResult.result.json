@@ -1,0 +1,54 @@
+{
+  "expectedResultMulti": [
+    {
+      "ParentOrderId": "ORD-100",
+      "id": "ResolverTestingOrderProductOrderItem_MyOrderItem-ORD\\-100-PRD\\-300",
+      "ParentOrder": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-100"
+    },
+    {
+      "ParentOrderId": "ORD-101",
+      "id": "ResolverTestingOrderProductOrderItem_MyOrderItem-ORD\\-101-PRD\\-301",
+      "ParentOrder": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-101"
+    },
+    {
+      "ParentOrderId": "ORD-102",
+      "id": "ResolverTestingOrderProductOrderItem_MyOrderItem-ORD\\-102-PRD\\-302",
+      "ParentOrder": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-102"
+    },
+    {
+      "ParentOrderId": "ORD-103",
+      "id": "ResolverTestingOrderProductOrderItem_MyOrderItem-ORD\\-103-PRD\\-303",
+      "ParentOrder": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-103"
+    },
+    {
+      "ParentOrderId": "ORD-104",
+      "id": "ResolverTestingOrderProductOrderItem_MyOrderItem-ORD\\-104-PRD\\-304",
+      "ParentOrder": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-104"
+    },
+    {
+      "ParentOrderId": "ORD-105",
+      "id": "ResolverTestingOrderProductOrderItem_MyOrderItem-ORD\\-105-PRD\\-305",
+      "ParentOrder": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-105"
+    },
+    {
+      "ParentOrderId": "ORD-106",
+      "id": "ResolverTestingOrderProductOrderItem_MyOrderItem-ORD\\-106-PRD\\-306",
+      "ParentOrder": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-106"
+    },
+    {
+      "ParentOrderId": "ORD-107",
+      "id": "ResolverTestingOrderProductOrderItem_MyOrderItem-ORD\\-107-PRD\\-307",
+      "ParentOrder": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-107"
+    },
+    {
+      "ParentOrderId": "ORD-108",
+      "id": "ResolverTestingOrderProductOrderItem_MyOrderItem-ORD\\-108-PRD\\-308",
+      "ParentOrder": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-108"
+    },
+    {
+      "ParentOrderId": "ORD-109",
+      "id": "ResolverTestingOrderProductOrderItem_MyOrderItem-ORD\\-109-PRD\\-309",
+      "ParentOrder": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-109"
+    }
+  ]
+}

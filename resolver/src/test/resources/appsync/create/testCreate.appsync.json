@@ -1,0 +1,33 @@
+{
+  "arguments": {
+    "input": {
+      "TableId": 5,
+      "IntField": 5,
+      "FloatField": 6.5,
+      "StringField": "my_string2",
+      "BooleanField": false,
+      "DateField": "2025-05-05",
+      "TimeField": "12:00:15.123",
+      "DateTimeField": "2024-05-05T10:00:20.456Z",
+      "EpochField": 1666000000,
+      "EmailField": "dndred@salesforce.com",
+      "PhoneField": "9995554444",
+      "UrlField": "https://amazon.com",
+      "JsonField": {"other": "jsoned"},
+      "IpAddressField": "192.168.0.1"
+    }
+  },
+  "info": {
+    "fieldName": "create_ResolverTestingTypes_TypesTest",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "TableId",
+      "FloatField",
+      "TimeField",
+      "DateTimeField",
+      "JsonField",
+      "IpAddressField"
+    ]
+  }
+}

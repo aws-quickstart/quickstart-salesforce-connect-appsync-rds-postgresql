@@ -1,0 +1,42 @@
+{
+  "arguments": {
+    "where": {
+      "IntField": {"eq": 2},
+      "FloatField": {"eq": 1.5},
+      "StringField": {"eq": "my_string"},
+      "BooleanField": {"eq": true},
+      "DateField": {"eq": "2022-05-05"},
+      "TimeField": {"eq": "10:00:15"},
+      "DateTimeField": {"eq": "2022-05-05T10:00:20.123Z"},
+      "EpochField": {"eq": 1666761185},
+      "EmailField": {"eq": "johndoe@notrealemail.com"},
+      "PhoneField": {"eq": "8085554444"},
+      "UrlField": {"eq": "https://google.com"},
+      "JsonField": {"eq": {"test": "json"}},
+      "IpAddressField": {"eq": "192.168.0.1"}
+    }
+  },
+  "info": {
+    "fieldName": "resolverTestingTypes_TypesTest",
+    "parentTypeName": "Query",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/TableId",
+      "edges/node/IntField",
+      "edges/node/FloatField",
+      "edges/node/StringField",
+      "edges/node/BooleanField",
+      "edges/node/DateField",
+      "edges/node/TimeField",
+      "edges/node/DateTimeField",
+      "edges/node/EpochField",
+      "edges/node/EmailField",
+      "edges/node/PhoneField",
+      "edges/node/UrlField",
+      "edges/node/JsonField",
+      "edges/node/IpAddressField"
+    ]
+  }
+}

@@ -1,0 +1,3 @@
+{
+  "expectedErrorMessage": "unable to parse global id value ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-Wrong-Components. expected it to be in the form: ResolverTestingOrderProductOrderItem_MyOrder-OrderId. dashes should be escaped with '\\'"
+}

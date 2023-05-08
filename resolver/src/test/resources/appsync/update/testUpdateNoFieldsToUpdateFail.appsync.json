@@ -1,0 +1,15 @@
+{
+  "arguments": {
+    "input": {
+      "id": "ResolverTestingTypes_TypesTest-1"
+    }
+  },
+  "info": {
+    "fieldName": "update_ResolverTestingTypes_TypesTest",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "StringField"
+    ]
+  }
+}

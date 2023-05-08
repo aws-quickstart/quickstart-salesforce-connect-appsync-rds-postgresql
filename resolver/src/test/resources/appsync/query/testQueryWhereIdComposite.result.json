@@ -1,0 +1,10 @@
+{
+  "expectedResultMulti": [
+    {
+      "ParentOrderId": "ORD-100",
+      "ParentProductId": "PRD-300",
+      "Quantity": 10,
+      "id": "ResolverTestingOrderProductOrderItem_MyOrderItem-ORD\\-100-PRD\\-300"
+    }
+  ]
+}

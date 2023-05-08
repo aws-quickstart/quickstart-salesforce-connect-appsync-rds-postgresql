@@ -1,0 +1,17 @@
+{
+  "databaseTableName": "resolver_testing_global_id_types.int_float",
+  "keyFields": [
+    "IntId",
+    "FloatId"
+  ],
+  "graphQLFields": {
+    "IntId": {
+      "fieldType": "Int",
+      "columnName": "int_id"
+    },
+    "FloatId": {
+      "fieldType": "Float",
+      "columnName": "float_id"
+    }
+  }
+}

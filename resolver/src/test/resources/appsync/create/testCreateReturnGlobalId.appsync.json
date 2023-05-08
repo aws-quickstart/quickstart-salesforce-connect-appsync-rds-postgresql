@@ -1,0 +1,18 @@
+{
+  "arguments": {
+    "input": {
+      "OrderId": "ORD-1000",
+      "OrderDate": "2026-05-10T13:14:15Z",
+      "Status": "processing",
+      "TotalCost": 100.50
+    }
+  },
+  "info": {
+    "fieldName": "create_ResolverTestingOrderProductOrderItem_MyOrder",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "id"
+    ]
+  }
+}

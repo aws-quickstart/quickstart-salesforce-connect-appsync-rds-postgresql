@@ -1,0 +1,14 @@
+{
+  "arguments": {},
+  "info": {
+    "fieldName": "resolverTestingGlobalIdTypes_LookupTable",
+    "parentTypeName": "Query",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/id",
+      "edges/node/ParentDateTime"
+    ]
+  }
+}

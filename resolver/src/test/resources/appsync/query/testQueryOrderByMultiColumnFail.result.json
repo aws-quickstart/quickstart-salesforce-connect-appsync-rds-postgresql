@@ -1,0 +1,3 @@
+{
+  "expectedErrorMessage": "each OrderBy object can only specify one field to order by. got: [Price, ProductId]"
+}

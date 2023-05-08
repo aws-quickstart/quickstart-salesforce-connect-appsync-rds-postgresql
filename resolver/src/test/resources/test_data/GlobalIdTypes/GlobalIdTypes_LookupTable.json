@@ -1,0 +1,49 @@
+{
+  "databaseTableName": "resolver_testing_global_id_types.lookup_table",
+  "keyFields": [
+    "ParentIntId",
+    "ParentFloatId",
+    "ParentDateId",
+    "ParentTimeId",
+    "ParentDateTimeId"
+  ],
+  "lookupInfos": {
+    "ParentIntFloat": {
+      "type": "ResolverTestingGlobalIdTypes_IntFloat",
+      "keyFields": [
+        "ParentIntId",
+        "ParentFloatId"
+      ]
+    },
+    "ParentDateTime": {
+      "type": "ResolverTestingGlobalIdTypes_DateTime",
+      "keyFields": [
+        "ParentDateId",
+        "ParentTimeId",
+        "ParentDateTimeId"
+      ]
+    }
+  },
+  "graphQLFields": {
+    "ParentIntId": {
+      "fieldType": "Int",
+      "columnName": "parent_int_id"
+    },
+    "ParentFloatId": {
+      "fieldType": "Float",
+      "columnName": "parent_float_id"
+    },
+    "ParentDateId": {
+      "fieldType": "AWSDate",
+      "columnName": "parent_date_id"
+    },
+    "ParentTimeId": {
+      "fieldType": "AWSTime",
+      "columnName": "parent_time_id"
+    },
+    "ParentDateTimeId": {
+      "fieldType": "AWSDateTime",
+      "columnName": "parent_date_time_id"
+    }
+  }
+}

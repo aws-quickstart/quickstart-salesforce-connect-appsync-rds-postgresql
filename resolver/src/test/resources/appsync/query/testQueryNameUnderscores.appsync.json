@@ -1,0 +1,13 @@
+{
+  "arguments": {},
+  "info": {
+    "fieldName": "ResolverTestingSpecial__Name_Multi___Underscores",
+    "parentTypeName": "Query",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/Table____Id"
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "arguments": {
+    "input": {
+      "id": "ResolverTestingTypes_TypesTest-1",
+      "StringField": null,
+      "IntField": null,
+      "FloatField": null,
+      "BooleanField": null,
+      "DateField": null,
+      "TimeField": null,
+      "DateTimeField": null,
+      "EpochField": null,
+      "EmailField": null,
+      "PhoneField": null,
+      "UrlField": null,
+      "JsonField": null
+    }
+  },
+  "info": {
+    "fieldName": "update_ResolverTestingTypes_TypesTest",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "StringField"
+    ]
+  }
+}

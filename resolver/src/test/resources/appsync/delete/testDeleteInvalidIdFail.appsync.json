@@ -1,0 +1,15 @@
+{
+  "arguments": {
+    "id": "ResolverTestingOrderProductOrderItem_MyOrderItem-blahblahblah"
+  },
+  "info": {
+    "fieldName": "delete_ResolverTestingOrderProductOrderItem_MyOrderItem",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "ParentOrderId",
+      "ParentProductId",
+      "Quantity"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "arguments": {
+    "where": {
+      "not": {
+        "or": [
+          {"ParentOrder": {"eq": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-100"}},
+          {"ParentOrder": {"eq": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-101"}},
+          {"ParentOrder": {"eq": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-102"}},
+          {"ParentOrder": {"eq": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-103"}},
+          {"ParentOrder": {"eq": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-104"}},
+          {"ParentOrder": {"eq": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-105"}},
+          {"ParentOrder": {"eq": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-106"}},
+          {"ParentOrder": {"eq": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-107"}},
+          {"ParentOrder": {"eq": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-108"}}
+        ]
+      }
+    }
+  },
+  "info": {
+    "fieldName": "resolverTestingOrderProductOrderItem_MyOrderItem",
+    "parentTypeName": "Query",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/ParentOrderId"
+    ]
+  }
+}

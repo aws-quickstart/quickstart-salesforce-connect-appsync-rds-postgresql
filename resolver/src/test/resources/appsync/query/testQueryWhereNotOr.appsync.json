@@ -1,0 +1,29 @@
+{
+  "arguments": {
+    "where": {
+      "not": {
+        "or": [
+          {"OrderId": {"eq": "ORD-100"}},
+          {"OrderId": {"eq": "ORD-101"}},
+          {"OrderId": {"eq": "ORD-102"}},
+          {"OrderId": {"eq": "ORD-103"}},
+          {"OrderId": {"eq": "ORD-104"}},
+          {"OrderId": {"eq": "ORD-105"}},
+          {"OrderId": {"eq": "ORD-106"}},
+          {"OrderId": {"eq": "ORD-107"}},
+          {"OrderId": {"eq": "ORD-108"}}
+        ]
+      }
+    }
+  },
+  "info": {
+    "fieldName": "resolverTestingOrderProductOrderItem_MyOrder",
+    "parentTypeName": "Query",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/OrderId"
+    ]
+  }
+}

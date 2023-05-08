@@ -1,0 +1,10 @@
+{
+  "databaseTableName": "resolver_testing_special__name.multi___underscores",
+  "keyFields": ["Table____Id"],
+  "graphQLFields": {
+    "Table____Id": {
+      "fieldType": "Int",
+      "columnName": "table____id"
+    }
+  }
+}

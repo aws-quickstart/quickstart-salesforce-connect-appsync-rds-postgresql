@@ -1,0 +1,13 @@
+{
+  "arguments": {
+    "id": "ExpectedFail_MissingKeyFields"
+  },
+  "info": {
+    "fieldName": "delete_ExpectedFail_MissingKeyFields",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "TableId"
+    ]
+  }
+}

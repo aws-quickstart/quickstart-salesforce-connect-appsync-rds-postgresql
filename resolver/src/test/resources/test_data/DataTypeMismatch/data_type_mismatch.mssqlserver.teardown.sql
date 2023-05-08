@@ -1,0 +1,2 @@
+DROP TABLE resolver_testing_data_type_mismatch.date_time;
+DROP SCHEMA resolver_testing_data_type_mismatch;

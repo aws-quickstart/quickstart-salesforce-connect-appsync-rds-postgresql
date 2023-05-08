@@ -1,0 +1,1 @@
+DROP SCHEMA resolver_testing_special__name CASCADE;

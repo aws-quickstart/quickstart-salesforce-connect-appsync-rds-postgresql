@@ -1,0 +1,1 @@
+DROP USER resolver_testing_order_product_order_item CASCADE;

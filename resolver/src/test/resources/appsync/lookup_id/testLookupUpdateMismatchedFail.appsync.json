@@ -1,0 +1,20 @@
+{
+  "arguments": {
+    "input": {
+      "id": "ResolverTestingOrderProductOrderItem_MyOrderItem-ORD\\-100-PRD\\-300",
+      "ParentOrderId": "ORD-102",
+      "ParentOrder": "ResolverTestingOrderProductOrderItem_MyOrder-ORD\\-100"
+    }
+  },
+  "info": {
+    "fieldName": "update_ResolverTestingOrderProductOrderItem_MyOrderItem",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/ParentOrderId",
+      "edges/node/ParentOrder"
+    ]
+  }
+}

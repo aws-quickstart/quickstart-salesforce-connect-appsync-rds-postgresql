@@ -1,0 +1,27 @@
+{
+  "arguments": {
+    "input": {
+      "id": "ResolverTestingTypes_TypesTest-string",
+      "StringField": "newvalue",
+      "IntField": 1,
+      "FloatField": 1.5,
+      "BooleanField": true,
+      "DateField": "2019-06-07",
+      "TimeField": "20:05:10",
+      "DateTimeField": "2019-05-05T10:00:05Z",
+      "EpochField": 1666765702,
+      "EmailField": "johndoe@notrealemail.com",
+      "PhoneField": "8885554444",
+      "UrlField": "https://www.epochconverter.com/",
+      "JsonField": {"test": "json"}
+    }
+  },
+  "info": {
+    "fieldName": "update_ResolverTestingTypes_TypesTest",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "StringField"
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "arguments": {
+    "input": {
+      "TableId": 10
+    }
+  },
+  "info": {
+    "fieldName": "create_ExpectedFail_MissingFieldTypes",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "TableId"
+    ]
+  }
+}

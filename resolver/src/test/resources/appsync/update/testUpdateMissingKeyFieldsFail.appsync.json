@@ -1,0 +1,16 @@
+{
+  "arguments": {
+    "input": {
+      "id": "ExpectedFail_MissingKeyFields",
+      "TableId": 5
+    }
+  },
+  "info": {
+    "fieldName": "update_ExpectedFail_MissingKeyFields",
+    "parentTypeName": "Mutation",
+    "variables": {},
+    "selectionSetList": [
+      "TableId"
+    ]
+  }
+}

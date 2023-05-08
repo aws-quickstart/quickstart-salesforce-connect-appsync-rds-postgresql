@@ -1,0 +1,2 @@
+{
+  "expectedErrorMessage": "the fragment type does not match the global ID type. Fragment type: ExpectedFail_MissingFieldTypes. Global ID type: ExpectedFail_WrongType"}

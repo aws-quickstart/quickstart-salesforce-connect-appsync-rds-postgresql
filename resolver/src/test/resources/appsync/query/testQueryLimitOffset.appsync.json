@@ -1,0 +1,16 @@
+{
+  "arguments": {
+    "limit": 3, 
+    "offset": 5
+  },
+  "info": {
+    "fieldName": "resolverTestingOrderProductOrderItem_MyOrder",
+    "parentTypeName": "Query",
+    "variables": {},
+    "selectionSetList": [
+      "edges",
+      "edges/node",
+      "edges/node/OrderId"
+    ]
+  }
+}

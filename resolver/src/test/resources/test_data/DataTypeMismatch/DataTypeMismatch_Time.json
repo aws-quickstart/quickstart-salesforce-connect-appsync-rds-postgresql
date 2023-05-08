@@ -1,0 +1,18 @@
+{
+  "databaseTableName": "resolver_testing_data_type_mismatch.time",
+  "keyFields": ["IntId"],
+  "graphQLFields": {
+    "IntId": {
+      "fieldType": "Int",
+      "columnName": "int_id"
+    },
+    "TimeNoTz": {
+      "fieldType": "AWSTime",
+      "columnName": "time_no_tz"
+    },
+    "TimeTz": {
+      "fieldType": "AWSTime",
+      "columnName": "time_tz"
+    }
+  }
+}

@@ -1,0 +1,3 @@
+{
+  "expectedErrorMessage": "SystemsManager parameter for ExpectedFail_MissingKeyFields must define keyFields"
+}

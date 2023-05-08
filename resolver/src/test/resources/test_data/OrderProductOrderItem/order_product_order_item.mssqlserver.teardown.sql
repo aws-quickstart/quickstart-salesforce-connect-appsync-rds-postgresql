@@ -1,0 +1,4 @@
+DROP TABLE resolver_testing_order_product_order_item.my_order_item;
+DROP TABLE resolver_testing_order_product_order_item.my_order;
+DROP TABLE resolver_testing_order_product_order_item.my_product;
+DROP SCHEMA resolver_testing_order_product_order_item;
