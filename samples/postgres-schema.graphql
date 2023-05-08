@@ -1,0 +1,318 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+interface Node {
+  id: ID!
+}
+
+type Graphqlsample_MyOrder implements Node {
+  CustomerId: String
+  OrderDate: AWSDateTime
+  OrderId: ID!
+  SourceIpAddress: AWSIPAddress
+  Status: String
+  TotalCost: Float
+  id: ID!
+}
+
+type Graphqlsample_MyOrderItem implements Node {
+  ParentOrder: ID!
+  ParentOrderId: ID!
+  ParentProduct: ID!
+  ParentProductId: ID!
+  Quantity: Int
+  id: ID!
+}
+
+type Graphqlsample_MyOrderItem_Connection {
+  edges: [Graphqlsample_MyOrderItem_Edge]
+}
+
+type Graphqlsample_MyOrderItem_Edge {
+  cursor: String!
+  node: Graphqlsample_MyOrderItem
+}
+
+type Graphqlsample_MyOrder_Connection {
+  edges: [Graphqlsample_MyOrder_Edge]
+}
+
+type Graphqlsample_MyOrder_Edge {
+  cursor: String!
+  node: Graphqlsample_MyOrder
+}
+
+type Graphqlsample_MyProduct implements Node {
+  Discontinued: Boolean
+  Name: String
+  Price: Float
+  ProductId: ID!
+  id: ID!
+}
+
+type Graphqlsample_MyProduct_Connection {
+  edges: [Graphqlsample_MyProduct_Edge]
+}
+
+type Graphqlsample_MyProduct_Edge {
+  cursor: String!
+  node: Graphqlsample_MyProduct
+}
+
+type Mutation {
+  create_Graphqlsample_MyOrder(input: Graphqlsample_MyOrder_CreateInput!): Graphqlsample_MyOrder
+  create_Graphqlsample_MyOrderItem(input: Graphqlsample_MyOrderItem_CreateInput!): Graphqlsample_MyOrderItem
+  create_Graphqlsample_MyProduct(input: Graphqlsample_MyProduct_CreateInput!): Graphqlsample_MyProduct
+  delete_Graphqlsample_MyOrder(id: ID!): Graphqlsample_MyOrder
+  delete_Graphqlsample_MyOrderItem(id: ID!): Graphqlsample_MyOrderItem
+  delete_Graphqlsample_MyProduct(id: ID!): Graphqlsample_MyProduct
+  update_Graphqlsample_MyOrder(input: Graphqlsample_MyOrder_UpdateInput!): Graphqlsample_MyOrder
+  update_Graphqlsample_MyOrderItem(input: Graphqlsample_MyOrderItem_UpdateInput!): Graphqlsample_MyOrderItem
+  update_Graphqlsample_MyProduct(input: Graphqlsample_MyProduct_UpdateInput!): Graphqlsample_MyProduct
+}
+
+type Query {
+  graphqlsample_MyOrder(limit: Int, offset: Int, orderBy: [Graphqlsample_MyOrder_OrderByInput], where: Graphqlsample_MyOrder_FilterInput): Graphqlsample_MyOrder_Connection
+  graphqlsample_MyOrderItem(limit: Int, offset: Int, orderBy: [Graphqlsample_MyOrderItem_OrderByInput], where: Graphqlsample_MyOrderItem_FilterInput): Graphqlsample_MyOrderItem_Connection
+  graphqlsample_MyProduct(limit: Int, offset: Int, orderBy: [Graphqlsample_MyProduct_OrderByInput], where: Graphqlsample_MyProduct_FilterInput): Graphqlsample_MyProduct_Connection
+  node(id: ID!): Node
+}
+
+enum Direction {
+  ASC
+  DESC
+}
+
+enum NullsOrder {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+input AWSDateOperator {
+  eq: AWSDate
+  ge: AWSDate
+  gt: AWSDate
+  in: [AWSDate]
+  le: AWSDate
+  like: AWSDate
+  lt: AWSDate
+  ne: AWSDate
+  nin: [AWSDate]
+}
+
+input AWSDateTimeOperator {
+  eq: AWSDateTime
+  ge: AWSDateTime
+  gt: AWSDateTime
+  in: [AWSDateTime]
+  le: AWSDateTime
+  like: AWSDateTime
+  lt: AWSDateTime
+  ne: AWSDateTime
+  nin: [AWSDateTime]
+}
+
+input AWSJSONOperator {
+  eq: AWSJSON
+  ge: AWSJSON
+  gt: AWSJSON
+  in: [AWSJSON]
+  le: AWSJSON
+  like: AWSJSON
+  lt: AWSJSON
+  ne: AWSJSON
+  nin: [AWSJSON]
+}
+
+input AWSTimeOperator {
+  eq: AWSTime
+  ge: AWSTime
+  gt: AWSTime
+  in: [AWSTime]
+  le: AWSTime
+  like: AWSTime
+  lt: AWSTime
+  ne: AWSTime
+  nin: [AWSTime]
+}
+
+input BooleanOperator {
+  eq: Boolean
+  ge: Boolean
+  gt: Boolean
+  in: [Boolean]
+  le: Boolean
+  like: Boolean
+  lt: Boolean
+  ne: Boolean
+  nin: [Boolean]
+}
+
+input FloatOperator {
+  eq: Float
+  ge: Float
+  gt: Float
+  in: [Float]
+  le: Float
+  like: Float
+  lt: Float
+  ne: Float
+  nin: [Float]
+}
+
+input Graphqlsample_MyOrderItem_CreateInput {
+  ParentOrder: ID
+  ParentOrderId: ID
+  ParentProduct: ID
+  ParentProductId: ID
+  Quantity: Int
+}
+
+input Graphqlsample_MyOrderItem_FilterInput {
+  ParentOrder: IDOperator
+  ParentOrderId: StringOperator
+  ParentProduct: IDOperator
+  ParentProductId: StringOperator
+  Quantity: IntOperator
+  and: [Graphqlsample_MyOrderItem_FilterInput]
+  id: IDOperator
+  not: Graphqlsample_MyOrderItem_FilterInput
+  or: [Graphqlsample_MyOrderItem_FilterInput]
+}
+
+input Graphqlsample_MyOrderItem_OrderByInput {
+  ParentOrder: OrderByClause
+  ParentOrderId: OrderByClause
+  ParentProduct: OrderByClause
+  ParentProductId: OrderByClause
+  Quantity: OrderByClause
+  id: OrderByClause
+}
+
+input Graphqlsample_MyOrderItem_UpdateInput {
+  ParentOrder: ID
+  ParentOrderId: ID
+  ParentProduct: ID
+  ParentProductId: ID
+  Quantity: Int
+  id: ID!
+}
+
+input Graphqlsample_MyOrder_CreateInput {
+  CustomerId: String
+  OrderDate: AWSDateTime
+  OrderId: ID!
+  SourceIpAddress: AWSIPAddress
+  Status: String
+  TotalCost: Float
+}
+
+input Graphqlsample_MyOrder_FilterInput {
+  CustomerId: StringOperator
+  OrderDate: AWSDateTimeOperator
+  OrderId: StringOperator
+  SourceIpAddress: StringOperator
+  Status: StringOperator
+  TotalCost: FloatOperator
+  and: [Graphqlsample_MyOrder_FilterInput]
+  id: IDOperator
+  not: Graphqlsample_MyOrder_FilterInput
+  or: [Graphqlsample_MyOrder_FilterInput]
+}
+
+input Graphqlsample_MyOrder_OrderByInput {
+  CustomerId: OrderByClause
+  OrderDate: OrderByClause
+  OrderId: OrderByClause
+  SourceIpAddress: OrderByClause
+  Status: OrderByClause
+  TotalCost: OrderByClause
+  id: OrderByClause
+}
+
+input Graphqlsample_MyOrder_UpdateInput {
+  CustomerId: String
+  OrderDate: AWSDateTime
+  OrderId: String
+  SourceIpAddress: AWSIPAddress
+  Status: String
+  TotalCost: Float
+  id: ID!
+}
+
+input Graphqlsample_MyProduct_CreateInput {
+  Discontinued: Boolean
+  Name: String
+  Price: Float
+  ProductId: ID!
+}
+
+input Graphqlsample_MyProduct_FilterInput {
+  Discontinued: BooleanOperator
+  Name: StringOperator
+  Price: FloatOperator
+  ProductId: StringOperator
+  and: [Graphqlsample_MyProduct_FilterInput]
+  id: IDOperator
+  not: Graphqlsample_MyProduct_FilterInput
+  or: [Graphqlsample_MyProduct_FilterInput]
+}
+
+input Graphqlsample_MyProduct_OrderByInput {
+  Discontinued: OrderByClause
+  Name: OrderByClause
+  Price: OrderByClause
+  ProductId: OrderByClause
+  id: OrderByClause
+}
+
+input Graphqlsample_MyProduct_UpdateInput {
+  Discontinued: Boolean
+  Name: String
+  Price: Float
+  ProductId: String
+  id: ID!
+}
+
+input IDOperator {
+  eq: ID
+  ge: ID
+  gt: ID
+  in: [ID]
+  le: ID
+  like: ID
+  lt: ID
+  ne: ID
+  nin: [ID]
+}
+
+input IntOperator {
+  eq: Int
+  ge: Int
+  gt: Int
+  in: [Int]
+  le: Int
+  like: Int
+  lt: Int
+  ne: Int
+  nin: [Int]
+}
+
+input OrderByClause {
+  direction: Direction
+  nulls: NullsOrder
+}
+
+input StringOperator {
+  eq: String
+  ge: String
+  gt: String
+  in: [String]
+  le: String
+  like: String
+  lt: String
+  ne: String
+  nin: [String]
+}

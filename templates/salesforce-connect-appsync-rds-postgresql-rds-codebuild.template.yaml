@@ -49,12 +49,16 @@ Metadata:
       - Label:
           default: AppSync
         Parameters:
-          - GraphQLAdapterLocation
-          - GraphQLAdapterName
+          - GraphQLResolverName
           - GraphQLSchemaLocation
           - GraphQLSchemaName
           - RDSSchemaLocation
           - RDSSchemaName
+      - Label:
+          default: AWS Quick Start configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
     ParameterLabels:
       VPCID:
         default: VPC ID
@@ -96,10 +100,8 @@ Metadata:
         default: Minimum capacity
       MaxCapacity:
         default: Maximum capacity
-      GraphQLAdapterLocation:
-        default: GraphQL adapter location
-      GraphQLAdapterName:
-        default: GraphQL adapter name
+      GraphQLResolverName:
+        default: GraphQL resolver name
       GraphQLSchemaLocation:
         default: GraphQL schema location
       GraphQLSchemaName:
@@ -108,6 +110,10 @@ Metadata:
         default: RDS schema location
       RDSSchemaName:
         default: RDS schema name
+      QSS3BucketName:
+        default: Quick Start S3 bucket name
+      QSS3KeyPrefix:
+        default: Quick Start S3 key prefix
 
 Parameters:
   RDSClusterMode:
@@ -221,6 +227,19 @@ Parameters:
   RDSSecurityGroup:
     Type: String
 
+  QSS3BucketName:
+    AllowedPattern: "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$"
+    ConstraintDescription: "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+    Default: aws-quickstart
+    Description: "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+    Type: String
+  QSS3KeyPrefix:
+    AllowedPattern: "^[0-9a-zA-Z-/]*$"
+    ConstraintDescription: "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
+    Default: quickstart-salesforce-connect-appsync-rds-postgresql/
+    Description: "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
+    Type: String
+
   DBInstanceClass:
     Description: RDS Instance Class
     Type: String
@@ -234,13 +253,10 @@ Parameters:
       - db.t3.medium
       - db.t3.large
 
-  GraphQLAdapterLocation:
-    Description: Provide the location of the JAR or ZIP file.
+  GraphQLResolverName:
+    Description: Resolver name
     Type: String
-
-  GraphQLAdapterName:
-    Description: Adapter name
-    Type: String
+    Default: graphql.resolvers.sql-1.0.0.jar
 
   GraphQLSchemaLocation:
     Description: Provide the location of GraphQL schema.
@@ -257,7 +273,6 @@ Parameters:
   RDSSchemaName:
     Description: RDS Schema name
     Type: String
-
 
 Mappings:
   SnapStartRegionMap:
@@ -321,7 +336,7 @@ Conditions:
   CreateServerlessCluster: !Equals [!Ref RDSClusterMode, "Serverless"]
   CreateStandardCluster: !Equals [ !Ref RDSClusterMode, "Standard" ]
   AutoPauseClusterCondition: !Equals [!Ref AutoPauseCluster, "true"]
-
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
 
 Resources:
   AppSyncLambdaRole:
@@ -371,7 +386,7 @@ Resources:
       Role: !Ref RDSResolverLambdaRole
       Code:
         S3Bucket: !Ref ArtifactsBucket
-        S3Key: !Ref GraphQLAdapterName
+        S3Key: !Ref GraphQLResolverName
       VpcConfig:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroup
@@ -452,11 +467,19 @@ Resources:
             build:
               commands:
                 - echo Build started on `date`
-                - wget $GRAPHQL_ADAPTER_LOCATION
+                - echo Downloading $GRAPHQL_SCHEMA_NAME and copying to artifacts bucket...          
                 - wget $GRAPHQL_SCHEMA_LOCATION
                 - ls -lrt
-                - aws s3 cp $GRAPHQL_ADAPTER_NAME s3://$ARTIFACTS_BUCKET_LOCATION/
                 - aws s3 cp $GRAPHQL_SCHEMA_NAME s3://$ARTIFACTS_BUCKET_LOCATION/
+
+                - echo Building resolver source code...          
+                - aws s3 sync s3://$QS_S3_BUCKET_NAME/$QS_S3_KEY_PREFIX resolver-build
+                - cd resolver-build/resolver
+                - ls -lrt
+                - mvn package -Dmaven.test.skip
+                - ls -lrt
+                - echo Copying $GRAPHQL_RESOLVER_NAME to artifacts bucket...          
+                - aws s3 cp target/$GRAPHQL_RESOLVER_NAME s3://$ARTIFACTS_BUCKET_LOCATION/
 
                 - sudo yum update -y
                 - sudo yum install -y autoconf readline-devel zlib-devel jq
@@ -492,10 +515,8 @@ Resources:
             Value: !Ref AWS::Region
           - Name: AWS_ACCOUNT_ID
             Value: !Ref AWS::AccountId
-          - Name: GRAPHQL_ADAPTER_LOCATION
-            Value: !Ref GraphQLAdapterLocation
-          - Name: GRAPHQL_ADAPTER_NAME
-            Value: !Ref GraphQLAdapterName
+          - Name: GRAPHQL_RESOLVER_NAME
+            Value: !Ref GraphQLResolverName
           - Name: GRAPHQL_SCHEMA_LOCATION
             Value: !Ref GraphQLSchemaLocation
           - Name: GRAPHQL_SCHEMA_NAME
@@ -508,6 +529,13 @@ Resources:
             Value: !Ref ArtifactsBucket
           - Name: SECRET_NAME
             Value: !Ref RDSSecret
+          - Name: QS_S3_BUCKET_NAME
+            Value: !If
+              - UsingDefaultBucket
+              - !Sub '${QSS3BucketName}-${AWS::Region}'
+              - !Ref QSS3BucketName
+          - Name: QS_S3_KEY_PREFIX
+            Value: !Ref QSS3KeyPrefix
       TimeoutInMinutes: 60
       VpcConfig:
         VpcId:
@@ -517,7 +545,6 @@ Resources:
         Subnets:
           - !Ref PrivateSubnet1ID
           - !Ref PrivateSubnet2ID
-
 
   CodeBuildRun:
     Type: Custom::CodeBuildRun

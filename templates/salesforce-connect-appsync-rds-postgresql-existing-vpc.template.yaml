@@ -37,8 +37,7 @@ Metadata:
           default: AppSync
         Parameters:
           - AppSyncAuthenticationType
-          - GraphQLAdapterLocation
-          - GraphQLAdapterName
+          - GraphQLResolverName
           - GraphQLSchemaLocation
           - GraphQLSchemaName
           - RDSSchemaLocation
@@ -87,10 +86,8 @@ Metadata:
         default: My product parameter name
       AppSyncAuthenticationType:
         default: AppSync authentication type
-      GraphQLAdapterLocation:
-        default: GraphQL adapter location
-      GraphQLAdapterName:
-        default: GraphQL adapter name
+      GraphQLResolverName:
+        default: GraphQL resolver name
       GraphQLSchemaLocation:
         default: GraphQL schema location
       GraphQLSchemaName:
@@ -252,13 +249,10 @@ Parameters:
       - AWS_IAM
       - API_KEY
 
-  GraphQLAdapterLocation:
-    Description: Provide the location of the JAR or ZIP file.
+  GraphQLResolverName:
+    Description: Resolver name
     Type: String
-
-  GraphQLAdapterName:
-    Description: Adapter name
-    Type: String
+    Default: graphql.resolvers.sql-1.0.0.jar
 
   GraphQLSchemaLocation:
     Description: Provide the location of GraphQL schema.
@@ -312,6 +306,8 @@ Resources:
         MyProductParameter: !GetAtt ConfigurationStack.Outputs.MyProductParameter
         RDSSecretsKey: !GetAtt ConfigurationStack.Outputs.RDSSecretsKey
         RDSSecret: !GetAtt ConfigurationStack.Outputs.RDSSecret
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
 
   RDSCodeBuildStack:
     Type: 'AWS::CloudFormation::Stack'
@@ -341,8 +337,7 @@ Resources:
         CodeBuildSecurityGroup: !GetAtt IAMSecurityGroupStack.Outputs.CodeBuildSecurityGroup
         RDSSecurityGroup: !GetAtt IAMSecurityGroupStack.Outputs.RDSSecurityGroup
         DBInstanceClass: !Ref DBInstanceClass
-        GraphQLAdapterLocation: !Ref GraphQLAdapterLocation
-        GraphQLAdapterName: !Ref GraphQLAdapterName
+        GraphQLResolverName: !Ref GraphQLResolverName
         GraphQLSchemaLocation: !Ref GraphQLSchemaLocation
         GraphQLSchemaName: !Ref GraphQLSchemaName
         RDSSchemaLocation: !Ref RDSSchemaLocation
@@ -350,6 +345,8 @@ Resources:
         DatabaseName: !Ref DatabaseName
         DatabaseUserName: !Ref DatabaseUserName
         DatabasePort: !Ref DatabasePort
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
 
   AppSyncStack:
     Type: 'AWS::CloudFormation::Stack'

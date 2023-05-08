@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.*;
 
 public class PostgreSqlDatabaseProvider implements SqlDatabaseProvider {
-    public static final String VENDOR = "PostgreSQL";
+    public static final String VENDOR = "postgres";
 
     @Override
     public String getVendor() {
