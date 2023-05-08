@@ -20,6 +20,12 @@ Metadata:
           - MyProductParameter
           - RDSSecretsKey
           - RDSSecret
+      - Label:
+          default: AWS Quick Start configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
+
     ParameterLabels:
       VPCID:
         default: VPC ID
@@ -39,6 +45,10 @@ Metadata:
         default: RDS Secrets Key ARN
       RDSSecret:
         default: RDS Secrets ARN
+      QSS3BucketName:
+        default: Quick Start S3 bucket name
+      QSS3KeyPrefix:
+        default: Quick Start S3 key prefix
 
 Parameters:
   VPCID:
@@ -67,7 +77,21 @@ Parameters:
     Type: String
   RDSSecret:
     Type: String
+  QSS3BucketName:
+    AllowedPattern: "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$"
+    ConstraintDescription: "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+    Default: aws-quickstart
+    Description: "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+    Type: String
+  QSS3KeyPrefix:
+    AllowedPattern: "^[0-9a-zA-Z-/]*$"
+    ConstraintDescription: "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
+    Default: quickstart-salesforce-connect-appsync-rds-postgresql/
+    Description: "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
+    Type: String
 
+Conditions:
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
 
 Resources:
   AppSyncServiceRole:
@@ -218,6 +242,18 @@ Resources:
                     'ec2:Subnet':
                       - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${PrivateSubnet1ID}'
                       - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${PrivateSubnet2ID}'
+              - Resource: !Sub
+                  - arn:${AWS::Partition}:s3:::${S3Bucket}
+                  - S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
+                Effect: Allow
+                Action: s3:ListBucket
+              - Resource: !Sub
+                  - arn:${AWS::Partition}:s3:::${S3Bucket}/${QSS3KeyPrefix}*
+                  - S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
 
   CodeBuildSecurityGroup:
     Type: AWS::EC2::SecurityGroup

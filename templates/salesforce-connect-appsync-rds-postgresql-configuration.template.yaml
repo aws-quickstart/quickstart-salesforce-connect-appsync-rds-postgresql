@@ -169,7 +169,7 @@ Resources:
       Description: Generates random value for db password and stores in secrets manager
       KmsKeyId: !Ref RDSSecretsKey
       GenerateSecretString:
-        SecretStringTemplate: '{"username": "dbadmin", "databaseName": "graphqlrds", "vendor": "PostgreSQL", "port": "5432", "host": " "}'
+        SecretStringTemplate: '{"username": "dbadmin", "port": "5432", "host": " "}'
         GenerateStringKey: "password"
         PasswordLength: 20
         ExcludeCharacters: "\"@/\\;.:+' %"
@@ -183,16 +183,36 @@ Resources:
         - |
           {
             "secretName":"${SecretName}", 
-              "secretRegion": "${AWS::Region}",
-              "fieldTypes": {
-                "OrderId": "String",
-                "OrderDate": "AWSDateTime",
-                "Status": "String",
-                "TotalCost": "Float",
-                "SourceIpAddress": "AWSIPAddress" 
+            "secretRegion": "${AWS::Region}",
+            "databaseTableName": "graphqlsample.my_order",
+            "graphQLFields": {
+              "OrderId": {
+                "fieldType": "String",
+                "columnName": "order_id"
               },
-              "keyColumns": ["OrderId"]
-            }
+              "CustomerId": {
+                "fieldType": "String",
+                "columnName": "customer_id"
+              },          
+              "OrderDate": {
+                "fieldType": "AWSDateTime",
+                "columnName": "order_date"
+              },
+              "Status": {
+                "fieldType": "String",
+                "columnName": "status"
+              },
+              "TotalCost": {
+                "fieldType": "Float",
+                "columnName": "total_cost"
+              },
+              "SourceIpAddress": {
+                "fieldType": "AWSIPAddress",
+                "columnName": "source_ip_address"
+              }          
+            },          
+            "keyFields": ["OrderId"]
+          }
         - {
           SecretName: !Ref RDSSecret
         }
@@ -207,12 +227,22 @@ Resources:
           {
             "secretName":"${SecretName}", 
             "secretRegion": "${AWS::Region}",
-            "fieldTypes": {
-               "ParentOrderId": "String",
-               "ParentProductId": "String",
-               "Quantity": "Int" 
-            },
-            "keyColumns": ["ParentOrderId", "ParentProductId"]
+            "databaseTableName": "graphqlsample.my_order_item",          
+            "graphQLFields": {
+              "ParentOrderId": {
+                "fieldType": "String",
+                "columnName": "parent_order_id"
+              },
+              "ParentProductId": {
+                "fieldType": "String",
+                "columnName": "parent_product_id"
+              },
+              "Quantity": {
+                "fieldType": "Int",
+                "columnName": "quantity"
+              }
+            },                    
+            "keyFields": ["ParentOrderId", "ParentProductId"]
           }
         - {
           SecretName: !Ref RDSSecret
@@ -227,14 +257,27 @@ Resources:
         - |
           {
             "secretName":"${SecretName}", 
-              "secretRegion": "${AWS::Region}",
-              "fieldTypes": {
-                "ProductId": "String",
-                "Name": "String",
-                "Price": "Float",
-                "Discontinued": "Boolean"
+            "secretRegion": "${AWS::Region}",
+            "databaseTableName": "graphqlsample.my_product",
+            "graphQLFields": {
+              "ProductId": {
+                "fieldType": "String",
+                "columnName": "product_id"
               },
-              "keyColumns": ["ProductId"]
+              "Name": {
+                "fieldType": "String",
+                "columnName": "name"
+              },
+              "Price": {
+                "fieldType": "Float",
+                "columnName": "price"
+              },
+              "Discontinued": {
+                "fieldType": "Boolean",
+                "columnName": "discontinued"
+              }              
+            },                              
+            "keyFields": ["ProductId"]
           }
         - {
           SecretName: !Ref RDSSecret
