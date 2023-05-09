@@ -5,28 +5,28 @@
 === Test your deployment
 
 ==== Note the Database Information in Secrets Manager
-*From the AWS console, navigate to Secrets Manager, and choose the secret (it would be either _/graphqlrdsserverless/dbsecret_ or _/graphqlrds/dbsecret_, depending on the configuration.)
-*Copy the ARN under _Secret ARN_.
+* From the AWS console, navigate to Secrets Manager, and choose the secret (it would be either _/graphqlrdsserverless/dbsecret_ or _/graphqlrds/dbsecret_, depending on the configuration.)
+* Copy the ARN under _Secret ARN_.
 
 ==== Test RDS with a SQL Query
-*From the AWS console, navigate to RDS.
-*Choose Query Editor from the left navigation pane.
-*Choose your database cluster under _Database instance_ or _cluster_
-*Under Database username choose _Connect with a Secrets Manager ARN_
-*Enter the ARN that you copied from the previous step ("_Note the Database Information in Secrets Manager_")
-*Under _Enter the name of the database_, enter _graphqlrds_
-*Run a simple query to confirm that everything is working properly. Copy/paste the statment below to save time, then click Run and view the results in the lower portion of the screen.
+* From the AWS console, navigate to RDS.
+* Choose Query Editor from the left navigation pane.
+* Choose your database cluster under _Database instance_ or _cluster_
+* Under Database username choose _Connect with a Secrets Manager ARN_
+* Enter the ARN that you copied from the previous step ("_Note the Database Information in Secrets Manager_")
+* Under _Enter the name of the database_, enter _graphqlrds_
+* Run a simple query to confirm that everything is working properly. Copy/paste the statment below to save time, then click Run and view the results in the lower portion of the screen.
 [source,sql]
 ....
 SELECT * FROM graphqlsample.my_order WHERE order_id = 'ORD-100';
 ....
 
 ==== Test RDS with a SQL Query
-*From the AWS console, navigate to AWS AppSync.
-*Choose the GraphQL API that was created by CloudFormation.
-*Choose _Queries_ from the left navigation pane.
-*Run a simple GraphQL query in the Queries console to see that the API is returning the values as expected. This example runs a query via GraphQL which is functionally the same as the SQL query in the prior step. Paste the following into the center pane and click the Execute Query button (with the arrow icon).
-**When you get more familiar with these concepts, you can use the Explorer to drill in and build up a similar query.
+* From the AWS console, navigate to AWS AppSync.
+* Choose the GraphQL API that was created by CloudFormation.
+* Choose _Queries_ from the left navigation pane.
+* Run a simple GraphQL query in the Queries console to see that the API is returning the values as expected. This example runs a query via GraphQL which is functionally the same as the SQL query in the prior step. Paste the following into the center pane and click the Execute Query button (with the arrow icon).
+** When you get more familiar with these concepts, you can use the Explorer to drill in and build up a similar query.
 [source,asciidoc]
 ....
 query MyQuery {
@@ -103,8 +103,8 @@ Work with your account rep to get Salesforce Connect enabled in your Salesforce 
 
 Once the org is created and you can log in, take advantage of the sample data here to see how customer data in Salesforce can be augmented with data from external systems:
 
-*Create a Text field on the Account object called `customerID`, making sure it is marked as both an *External ID* and *Unique*.
-*Import the data the `sample-customers.csv` as Accounts and Contacts using the Data Import Wizard, being careful to import the first column into the new `customerID` field.
+* Create a Text field on the Account object called `customerID`, making sure it is marked as both an *External ID* and *Unique*.
+* Import the data the `sample-customers.csv` as Accounts and Contacts using the Data Import Wizard, being careful to import the first column into the new `customerID` field.
 
 The sample data here is meant to represent a realistic scenario in which customer data is stored in Salesforce, but Order and Product data is in Amazon RDS. Even though there are disparate data sources, the Order table has a foreign key identifying the customer who placed the order. If this natural key can also be found in Salesforce, it can be used to create an Indirect Lookup that links Orders to Accounts.
 
@@ -119,48 +119,48 @@ To be more specific, the *External Credential* captures the authentication detai
 ===== Access Control via Permission Set
 Since Salesforce is secure by default, any User that will use this credential to make a callout needs permission to do so. This is managed via *Permission Sets*, and for convenience, we’ll handle this first:
 
-*Navigate to Setup -> *Permission Sets*.
-*Identify a Permission Set all the calling Users already have, or click *New* to create a new one specifically for this purpose.
-**This example will use a new Permission Set called *Access External Systems*. Use that as the Label, and press `Tab` to generate an API Name.
-*Click *Save*.
-*Click *Manage Assignments*, then *Add Assignment* to assign this Permission Set to your User.
-*Follow the rest of the wizard to complete the assignment.
+* Navigate to Setup -> *Permission Sets*.
+* Identify a Permission Set all the calling Users already have, or click *New* to create a new one specifically for this purpose.
+** This example will use a new Permission Set called *Access External Systems*. Use that as the Label, and press `Tab` to generate an API Name.
+* Click *Save*.
+* Click *Manage Assignments*, then *Add Assignment* to assign this Permission Set to your User.
+* Follow the rest of the wizard to complete the assignment.
 
 ===== Authentication: External Credential
 You may recall that the AppSync endpoint is protected by an API key. External Credentials capture the authentication configuration, so follow these steps to set up the API key:
 
-*Navigate to Setup -> Named Credentials and click the *External Credentials* subtab.
-*Click *New* and select *Custom* for the Authentication Protocol.
-*Provide a *Label* (API Key Auth for AppSync) and developer *Name* (APIKeyAuthForAppSync), making note of the developer Name you assign for a later step.
-*Click *Save*.
+* Navigate to Setup -> Named Credentials and click the *External Credentials* subtab.
+* Click *New* and select *Custom* for the Authentication Protocol.
+* Provide a *Label* (API Key Auth for AppSync) and developer *Name* (APIKeyAuthForAppSync), making note of the developer Name you assign for a later step.
+* Click *Save*.
 
 At this point, the External Credential is created, though we need to store the API key—securely!—and link its use to the Permission Set we defined above. Here’s how that’s accomplished:
 
-*Under *Permission Set Mappings*, click *New*.
-*Select the Permission Set we created in the prior step (Access External Systems).
-*Under *Authentication Parameters*, click *New*.
-*Use `APIKey` as the *Name*, and paste in the API key from AppSync into the *Value* field.
-*Click *Save*.
+* Under *Permission Set Mappings*, click *New*.
+* Select the Permission Set we created in the prior step (Access External Systems).
+* Under *Authentication Parameters*, click *New*.
+* Use `APIKey` as the *Name*, and paste in the API key from AppSync into the *Value* field.
+* Click *Save*.
 
 This stores the API key in an encrypted manner, and links its access to the appropriate permissions. The last step for the External Credential is to configure the HTTP header AppSync expects to contain the API key. Here’s the steps:
 
-*Under *Custom Headers*, click *New*.
-*Enter the *Name* of the header required by AppSync: `x-api-key`.
-**This becomes the name of the header in the actual HTTP callout.
-*Enter the following formula as the *Value*: `\{!$Credential.APIKeyAuthForAppSync.APIKey\}`
-**This merge field syntax allows you to reference the API key without reducing security by hard-coding the secret value in clear text.
-*Click *Save*.
+* Under *Custom Headers*, click *New*.
+* Enter the *Name* of the header required by AppSync: `x-api-key`.
+** This becomes the name of the header in the actual HTTP callout.
+* Enter the following formula as the *Value*: `\{!$Credential.APIKeyAuthForAppSync.APIKey\}`
+** This merge field syntax allows you to reference the API key without reducing security by hard-coding the secret value in clear text.
+* Click *Save*.
 
 ===== Endpoint: Named Credential
 With the permissions and authentication defined, capturing the endpoint as a Named Credential is comparatively simple:
 
-*Navigate to Setup -> Named Credentials and click the *Named Credentials* subtab.
-*Click *New*
-*Enter a descriptive *Label* (AppSync API) and developer *Name* (`AppSyncAPI`), then paste in the *URL* of the API endpoint from AppSync.
-*Select the External Credential we created in the prior step (API Key Auth for AppSync)
-*Check the checkbox to *Allow Formulas in HTTP Header*.
-**This ensures the formula referencing the API key will be resolved correctly, and not interpreted as literal text.
-*Click *Save*.
+* Navigate to Setup -> Named Credentials and click the *Named Credentials* subtab.
+* Click *New*
+* Enter a descriptive *Label* (AppSync API) and developer *Name* (`AppSyncAPI`), then paste in the *URL* of the API endpoint from AppSync.
+* Select the External Credential we created in the prior step (API Key Auth for AppSync)
+* Check the checkbox to *Allow Formulas in HTTP Header*.
+** This ensures the formula referencing the API key will be resolved correctly, and not interpreted as literal text.
+* Click *Save*.
 
 ===== Credential Parameter Storage: User External Credentials
 
@@ -172,20 +172,20 @@ The AppSync API acts as an *External Data Source* in Salesforce, which yields on
 
 First, create the External Data Source:
 
-*Navigate to Setup -> External Data Sources and click *New External Data Source*.
-*Enter a descriptive Label for the *External Data Source* (Order Mgmt API) and press `Tab` to generate a developer *Name*.
-*Choose GraphQL as the *Type*.
-*Select the *Named Credential* we created in the prior step (AppSync API).
-*Check the checkbox to allow *Writable External Objects* so that this data can be edited from Salesforce.
-*Click *Save*.
+* Navigate to Setup -> External Data Sources and click *New External Data Source*.
+* Enter a descriptive Label for the *External Data Source* (Order Mgmt API) and press `Tab` to generate a developer *Name*.
+* Choose GraphQL as the *Type*.
+* Select the *Named Credential* we created in the prior step (AppSync API).
+* Check the checkbox to allow *Writable External Objects* so that this data can be edited from Salesforce.
+* Click *Save*.
 
 Next, we’ll use the exposed metadata to help create the External Objects:
 
-*Click *Validate and Sync*.
-*Note the table onscreen with the list of potential objects to add to Salesforce.
-**Tweak the Name and Label fields to match the screenshot below for increased readability.
-*Checkmark all three rows with the leftmost column, then click *Sync*.
-*Wait for the operation to complete, then note the new External Objects in the list toward the bottom of the screen.
+* Click *Validate and Sync*.
+* Note the table onscreen with the list of potential objects to add to Salesforce.
+** Tweak the Name and Label fields to match the screenshot below for increased readability.
+* Checkmark all three rows with the leftmost column, then click *Sync*.
+* Wait for the operation to complete, then note the new External Objects in the list toward the bottom of the screen.
 
 ==== Surface the Data in the Salesforce UI
 
@@ -199,14 +199,14 @@ Once you’ve gotten the out-of-box demo working, you can think about how to sur
 
 If the tables are in the same RDS instance, you only need to do the following:
 
-*Update the Schema in AppSync by adding the `type` and `input` declarations for the additional table
-**Follow the pattern you see in the `Graphqlsample_MyOrder` type to get the syntax correct.
-*Make sure to click *Save Schema* to capture your updates.
-*Attach the included resolver to the query and mutations for the new table.
-**In the *Resolvers* section of the Schema tab in AWS AppSync console, select the query or mutation, and click *Attach*. In *Create new resolver*, select the Lambda function from the dropdown list.
-**Repeat the process to attach the resolver for all the queries and mutations defined in the GraphQL schema. For example, if Salesforce Connect can perform create, read, update and delete operations on records, you must attach the resolver four times.
-*Add additional entries in the Parameter Store in Systems Manager to specify the metadata.
-**Follow the example in `/appsync/typemetadata/Graphqlsample_MyOrder` and create an additional parameter for each table, including the `fieldTypes`, `keyColumns`, etc.
+* Update the Schema in AppSync by adding the `type` and `input` declarations for the additional table
+** Follow the pattern you see in the `Graphqlsample_MyOrder` type to get the syntax correct.
+* Make sure to click *Save Schema* to capture your updates.
+* Attach the included resolver to the query and mutations for the new table.
+** In the *Resolvers* section of the Schema tab in AWS AppSync console, select the query or mutation, and click *Attach*. In *Create new resolver*, select the Lambda function from the dropdown list.
+** Repeat the process to attach the resolver for all the queries and mutations defined in the GraphQL schema. For example, if Salesforce Connect can perform create, read, update and delete operations on records, you must attach the resolver four times.
+* Add additional entries in the Parameter Store in Systems Manager to specify the metadata.
+** Follow the example in `/appsync/typemetadata/Graphqlsample_MyOrder` and create an additional parameter for each table, including the `fieldTypes`, `keyColumns`, etc.
 
 If you are using a different RDS instance, you’ll also need to add the RDS credentials to the Secrets Manager and set up the port forwarding so that the resolver can have a persistent connection to RDS. If you are unsure about this element of the infrastructure, contact AWS support.
 
