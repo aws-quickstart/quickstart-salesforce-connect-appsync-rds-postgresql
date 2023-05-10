@@ -11,6 +11,8 @@ image::../docs/deployment_guide/images/salesforce-connect-appsync-rds-postgresql
 
 As shown in <<architecture1>>, this Partner Solution sets up the following:
 
+* Salesforce's External Objects subsystem invokes the GraphQL Adapter when data is needed from RDS.
+* The GraphQL Adapter translates the activity in Salesforce to a GraphQL query or mutation, and sends the request to the AppSync API endpoint.
 * A highly available architecture that spans two Availability Zones.*
 * A virtual private cloud (VPC) configured with public and private subnets, according to AWS
 best practices, to provide you with your own virtual network on AWS.*
@@ -20,11 +22,10 @@ internet access for resources in the private subnets.*
 * In the private subnets:
 ** An Amazon Aurora database cluster, with an option to choose between Amazon Aurora PostgreSQL and Amazon Aurora Serverless.
 * AWS AppSync with a public endpoint, to be called from Salesforce.
-* A Resolver Lambda function that converts GraphQL queries into SQL queries and executes them on the deployed Amazon Aurora cluster.
+* A RDS resolver Lambda function that converts GraphQL queries into SQL queries and executes them on the deployed Amazon Aurora cluster.
 * Amazon S3 bucket to store artifacts.
 * AWS Secrets Manager to store credentials for Amazon Aurora database.
 * AWS Systems Manager Parameter Store for storing parameters.
-
 // Add bullet points for any additional components that are included in the deployment. Ensure that the additional components are shown in the architecture diagram. End each bullet with a period.
 
 [.small]#* The template that deploys this Partner Solution into an existing VPC skips the components marked by asterisks and prompts you for your existing VPC configuration.#
