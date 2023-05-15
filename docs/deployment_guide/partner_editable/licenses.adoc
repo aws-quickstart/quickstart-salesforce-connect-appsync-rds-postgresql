@@ -2,4 +2,7 @@
 
 There is no AWS cost to use this Partner Solution, but you will be billed for any AWS services or resources that this Partner Solution deploys. For more information, refer to the https://fwd.aws/rA69w?[AWS Partner Solution General Information Guide^].
 
-This Partner Solution requires a Salesforce Edition and one or more Salesforce Connect add-on licenses. Please work with a Salesforce Account Executive to purchase desired add-ons. For more information, refer to the https://help.salesforce.com/s/articleView?id=sf.platform_connect_license.htm&type=5[Salesforce Help Documentation].
+
+
+
+This Partner Solution requires a Salesforce Edition and one or more Salesforce Connect add-on licenses. Please work with a Salesforce Account Executive to purchase desired add-ons. For more information, refer to the https://help.salesforce.com/s/articleView?id=sf.platform_connect_license.htm&type=5[Salesforce Help Documentation]. Alternatively, you can https://developer.salesforce.com/signup[sign up for a Developer Edition org] or get a Salesforce org via https://trailhead.salesforce.com/[Salesforce's Trailhead learning platform].
