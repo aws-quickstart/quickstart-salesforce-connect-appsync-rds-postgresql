@@ -1,4 +1,4 @@
-:partner-solution-project-name: partner-solution-repo-name
+:partner-solution-project-name: quickstart-salesforce-connect-appsync-rds-postgresql
 :partner-solution-github-org: aws-quickstart
 :partner-product-name: Salesforce Connect Adapter for GraphQL
 :partner-product-short-name: Salesforce Connect Adapter for GraphQL
