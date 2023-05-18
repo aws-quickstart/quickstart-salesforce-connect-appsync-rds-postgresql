@@ -2,7 +2,7 @@
 :partner-solution-github-org: aws-quickstart
 :partner-product-name: Salesforce Connect Adapter for GraphQL
 :partner-product-short-name: Salesforce Connect Adapter for GraphQL
-:partner-company-name: Salesforce, Inc
+:partner-company-name: Salesforce Inc.
 :doc-month: July
 :doc-year: 2023
 :partner-contributors: Ross Belmont and Georgia Liu, {partner-company-name}
