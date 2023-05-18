@@ -125,7 +125,7 @@ Parameters:
       - 'true'
       - 'false'
     Default: 'true'
-    Description: Choose "false" to disallow automatic pause for an idle Aurora DB cluster in "serverless" DB cluster mode. With auto pause, a serverless cluster scales capacity to 0 Aurora capacity units (ACUs) when idle (no connections).
+    Description: Choose "false" to disallow automatic pause of an idle, serverless Aurora DB cluster. With auto pause, a serverless cluster scales capacity to 0 Aurora capacity units (ACUs) when idle (no connections).
 
   SecondsUntilAutoPause:
     Type: Number
@@ -139,7 +139,7 @@ Parameters:
       - 86400
     Default: 300
     Description: >
-      Enter the time, in seconds, before an idle Aurora DB cluster in serverless mode scales capacity to 0 ACUs (auto-pauses). Valid entries are 300 (five minutes), 600 (10 minutes), 1200 (20 minutes), 3600 (one hour), 14400 (four hours), 28800 (eight hours), and 86400 (24 hours).
+      Enter the time, in seconds, before an idle, serverless Aurora DB cluster scales capacity to 0 ACUs (auto-pauses). Valid entries are 300 (five minutes), 600 (10 minutes), 1200 (20 minutes), 3600 (one hour), 14400 (four hours), 28800 (eight hours), and 86400 (24 hours).
 
   MinCapacity:
     Type: Number
@@ -154,7 +154,7 @@ Parameters:
       - 384
     Default: 2
     Description: >
-      Enter the minimum capacity for an Aurora DB cluster in serverless mode.
+      Enter the minimum capacity for a serverless Aurora DB cluster.
 
   MaxCapacity:
     Type: Number
@@ -169,7 +169,7 @@ Parameters:
       - 384
     Default: 16
     Description: >
-      Enter the maximum capacity for an Aurora DB cluster in serverless mode. Must be greater than or equal to minimum capacity.
+      Enter the maximum capacity for a serverless Aurora DB cluster. Must be greater than or equal to minimum capacity.
 
   PrivateSubnet1CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
@@ -203,9 +203,7 @@ Parameters:
     Type: String
 
   AvailabilityZones:
-    Description: List of Availability Zones to use for the subnets in the VPC. Only
-      two Availability Zones are used for this deployment, and the logical order of
-      your selections is preserved.
+    Description: Choose two Availability Zones to use for this deployment.
     Type: List<AWS::EC2::AvailabilityZone::Name>
 
 
@@ -246,7 +244,7 @@ Parameters:
     Type: String
 
   DBInstanceClass:
-    Description: RDS Instance Class
+    Description: RDS instance class.
     Type: String
     Default: db.t3.medium
     AllowedValues:
@@ -259,11 +257,11 @@ Parameters:
       - db.t3.large
 
   DatabaseUserName:
-    Description: Database user name
+    Description: Database user name.
     Type: String
     Default: dbadmin
   DatabaseName:
-    Description: Database name
+    Description: Database name.
     Type: String
     Default: graphqlrds
   DatabasePort:
@@ -271,20 +269,20 @@ Parameters:
     Default: 5432
 
   MyOrderParameterName:
-    Description: My order parameter name
+    Description: My order parameter name.
     Type: String
     Default: "/appsync/typemetadata/Graphqlsample_MyOrder"
   MyOrderItemParameterName:
-    Description: My order item parameter name
+    Description: My order item parameter name.
     Type: String
     Default: "/appsync/typemetadata/Graphqlsample_MyOrderItem"
   MyProductParameterName:
-    Description: My product parameter name
+    Description: My product parameter name.
     Type: String
     Default: "/appsync/typemetadata/Graphqlsample_MyProduct"
 
   AppSyncAuthenticationType:
-    Description: How do you want to authenticate to the AppSync endpoint?
+    Description: Choose "AWS_IAM" to authenticate interactions with AWS AppSync using AWS IAM permissions instead of API keys.
     Type: String
     Default: API_KEY
     AllowedValues:
@@ -292,12 +290,12 @@ Parameters:
       - API_KEY
 
   GraphQLResolverName:
-    Description: Resolver name
+    Description: Resolver name.
     Type: String
     Default: graphql.resolvers.sql-1.0.0.jar
 
   GraphQLSchemaLocation:
-    Description: Provide the location of GraphQL schema.
+    Description: Enter the location of GraphQL schema.
     Type: String
 
   GraphQLSchemaName:
@@ -305,11 +303,11 @@ Parameters:
     Type: String
 
   RDSSchemaLocation:
-    Description: Provide the location of RDS schema.
+    Description: Enter the location of RDS schema.
     Type: String
 
   RDSSchemaName:
-    Description: RDS Schema name
+    Description: RDS schema name.
     Type: String
 
 Conditions:
