@@ -2,33 +2,40 @@
 
 == Postdeployment steps
 
-=== Test your deployment
+=== Test the deployment
 
 ==== Copy the database secret ARN from Secrets Manager
-* Sign in to the AWS Management Console and open the https://console.aws.amazon.com/secretsmanager/[Secrets Manager console].
-* In the left navigation pane, choose *Secrets*.
-* Choose the secret for your deployment, either `/graphqlrdsserverless/dbsecret` (Aurora Serverless v.1) or `/graphqlrds/dbsecret` (Aurora PostgreSQL-compatible).
-* On the secret details page, copy the *Secret ARN*.
+. Sign in to the AWS Management Console and open the https://console.aws.amazon.com/secretsmanager/[Secrets Manager console].
+. In the left navigation pane, choose *Secrets*.
+. Choose the secret for your deployment, either `/graphqlrdsserverless/dbsecret` (Aurora Serverless v.1) or `/graphqlrds/dbsecret` (Aurora PostgreSQL-compatible).
+. On the secret details page, copy the *Secret ARN*.
 
-==== Test RDS with a SQL Query
-* Open the https://console.aws.amazon.com/rds/[Amazon RDS console].
-* In the left navigation pane, choose *Query Editor*.
-* Choose your database cluster under _Database instance_ or _cluster_
-* Under *Database username*, choose *Connect with a Secrets Manager ARN*.
-* Enter the database secret ARN that you copy from Secrets Manager. Refer to link:#_copy_the_database_secret_arn_from_secrets_manager[Copy the database ARN from Secrets Manager], earlier in this guide.
-* Under Enter the name of the database, enter _graphqlrds_
-* Run a simple query to confirm that everything is working properly. Copy/paste the statement below to save time, then click Run and view the results in the lower portion of the screen.
+==== Run a SQL query to test the database
+. Open the https://console.aws.amazon.com/rds/[Amazon RDS console].
+. In the left navigation pane, choose *Query Editor*.
+. For *Database instance or cluster*, choose your database cluster.
+. For *Database username*, choose *Connect with a Secrets Manager ARN*.
+. Enter the database secret ARN that you copy from Secrets Manager. Refer to link:#_copy_the_database_secret_arn_from_secrets_manager[Copy the database ARN from Secrets Manager], earlier in this guide.
+. For *Enter the name of the database*, enter `graphqlrds`.
+. In the query editor, enter the following statement.
+
++
 [source,sql]
 ....
 SELECT * FROM graphqlsample.my_order WHERE order_id = 'ORD-100';
 ....
 
-==== Test the AppSync API with a GraphQL Query
-* From the AWS console, navigate to AWS AppSync.
-* Choose the GraphQL API that was created by CloudFormation.
-* Choose _Queries_ from the left navigation pane.
-* Run a simple GraphQL query in the Queries console to see that the API is returning the values as expected. This example runs a query via GraphQL which is functionally the same as the SQL query in the prior step. Paste the following into the center pane and click the Execute Query button (with the arrow icon).
-** When you get more familiar with these concepts, you can use the Explorer to drill in and build up a similar query.
+[start=8]
+. Choose *Run* and the query editor displays the results.
+
+==== Run a GraphQL query to test the AppSync API
+. Open the https://console.aws.amazon.com/appsync/[AWS AppSync console].
+. In the left navigation pane, choose APIs.
+. Choose the deployment GraphQL API.
+. In the left navigation pane, choose *Queries*.
+. On the *Queries* page, enter the following query. The code provided runs a GraphQL query identical to the previous link:#_run_a_sql_to_test_the_database[SQL query].
+
++
 [source,asciidoc]
 ....
 query MyQuery {
@@ -46,7 +53,10 @@ query MyQuery {
 }
 ....
 
-After you click the Execute Query button, it may take a minute or so to see the first set of results due to Lambda's cold start. When it returns, you should see the following in the right-hand pane:
+[start=6]
+. Choose the play button to run the query. The query editor displays the results in the right pane. Your results should match the following:
+
++
 [source,asciidoc]
 ....
 {
@@ -67,6 +77,10 @@ After you click the Execute Query button, it may take a minute or so to see the 
   }
 }
 ....
+
+NOTE: Because a new Lambda function must be created and initialized, the query may take a minute or so to display the results.
+
+When you get more familiar with AppSync, you can use the AppSync query explorer to create similar queries.
 
 ==== Test the API Key
 Use `curl` (sample below) or Postman to ping the endpoint with the API key and see that auth is functioning correctly. Here, we will run the same query as the prior step, but from outside the AWS console. Again, the purpose is to validate the connectivity and authentication, since Salesforce will make a similar HTTP call to AppSync.
