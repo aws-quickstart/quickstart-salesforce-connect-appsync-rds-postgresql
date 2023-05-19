@@ -4,18 +4,20 @@
 
 === Test your deployment
 
-==== Note the Database Information in Secrets Manager
-* From the AWS console, navigate to Secrets Manager, and choose the secret (it would be either _/graphqlrdsserverless/dbsecret_ or _/graphqlrds/dbsecret_, depending on the configuration.)
-* Copy the ARN under _Secret ARN_.
+==== Copy the database secret ARN from Secrets Manager
+* Sign in to the AWS Management Console and open the https://console.aws.amazon.com/secretsmanager/[Secrets Manager console].
+* In the left navigation pane, choose *Secrets*.
+* Choose the secret for your deployment, either `/graphqlrdsserverless/dbsecret` (Aurora Serverless v.1) or `/graphqlrds/dbsecret` (Aurora PostgreSQL-compatible).
+* On the secret details page, copy the *Secret ARN*.
 
 ==== Test RDS with a SQL Query
-* From the AWS console, navigate to RDS.
-* Choose Query Editor from the left navigation pane.
+* Open the https://console.aws.amazon.com/rds/[Amazon RDS console].
+* In the left navigation pane, choose *Query Editor*.
 * Choose your database cluster under _Database instance_ or _cluster_
-* Under Database username choose _Connect with a Secrets Manager ARN_
-* Enter the ARN that you copied from the previous step ("_Note the Database Information in Secrets Manager_")
-* Under _Enter the name of the database_, enter _graphqlrds_
-* Run a simple query to confirm that everything is working properly. Copy/paste the statment below to save time, then click Run and view the results in the lower portion of the screen.
+* Under *Database username*, choose *Connect with a Secrets Manager ARN*.
+* Enter the database secret ARN that you copy from Secrets Manager. Refer to link:#_copy_the_database_secret_arn_from_secrets_manager[Copy the database ARN from Secrets Manager], earlier in this guide.
+* Under Enter the name of the database, enter _graphqlrds_
+* Run a simple query to confirm that everything is working properly. Copy/paste the statement below to save time, then click Run and view the results in the lower portion of the screen.
 [source,sql]
 ....
 SELECT * FROM graphqlsample.my_order WHERE order_id = 'ORD-100';
