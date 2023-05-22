@@ -33,7 +33,7 @@ SELECT * FROM graphqlsample.my_order WHERE order_id = 'ORD-100';
 . In the left navigation pane, choose APIs.
 . Choose the deployment GraphQL API.
 . In the left navigation pane, choose *Queries*.
-. On the *Queries* page, enter the following query. The code provided runs a GraphQL query identical to the previous link:#_run_a_sql_to_test_the_database[SQL query].
+. On the *Queries* page, enter the following query code. The code provided runs a GraphQL query identical to the previous link:#_run_a_sql_to_test_the_database[SQL query].
 
 +
 [source,asciidoc]
@@ -54,7 +54,7 @@ query MyQuery {
 ....
 
 [start=6]
-. Choose the play button to run the query. The query editor displays the results in the right pane. Your results should match the following:
+. Choose the play button to run the query. The query editor displays the results in the right pane. Your results should match the following example.
 
 +
 [source,asciidoc]
@@ -83,13 +83,13 @@ NOTE: Because a new Lambda function must be created and initialized, the query m
 When you get more familiar with AppSync, you can use the AppSync query explorer to create similar queries.
 
 ==== Test the API Key
-Test the API key and `auth` functionality, run a query from the command line to simulate a Salesforce HTTP call to AppSync. You can use the `curl` command or Postman. The following example that you can copy uses the `curl` command.
+Test the API key and `auth` functionality by running a query from the command line to simulate a Salesforce HTTP call to AppSync. You can use the `curl` command or Postman. The following example that you can copy uses the `curl` command.
 [source,asciidoc]
 ....
 curl -XPOST -H "Content-Type:application/graphql" -H "x-api-key:YOUR-API-key" -d '{ "query": "query MyQuery {graphqlsample_MyOrder(where: {OrderId: {eq: \"ORD-100\"}}) {edges {node {OrderDate SourceIpAddress CustomerId Status TotalCost}}}}" }' https://YOUR-APPSYNC-ENDPOINT/graphql
 ....
 
-Your results should match the following example, which has been formatted for readability.
+Your results should match the following, which are formatted for readability.
 [source,asciidoc]
 ....
 {
