@@ -113,15 +113,15 @@ Your results should match the following, which are formatted for readability.
 
 === Salesforce Configuration
 
-==== Load Sample Data in Salesforce
+==== Load sample data in Salesforce
 
-Take advantage of the sample data here to see how customer data in Salesforce can be augmented with data from external systems:
+Use the solution's sample data here to learn how customer data in Salesforce can be augmented with data from external systems like Aurora.
 
-* Log in to your Salesforce org.
-* Create a Text field on the Account object called `customerID`, making sure it is marked as both an *External ID* and *Unique*.
-* Import the data the `sample-customers.csv` as Accounts and Contacts using the https://trailhead.salesforce.com/content/learn/projects/import-and-export-with-data-management-tools/use-the-data-import-wizard[Data Import Wizard], being careful to import the first column into the new `customerID` field.
+. Sign in to your Salesforce org.
+. Create a text field on the `customerID` account object. Ensure that you mark the text field as an external ID and unique.
+. Import `sample-customers.csv` as accounts and contacts using the https://trailhead.salesforce.com/content/learn/projects/import-and-export-with-data-management-tools/use-the-data-import-wizard[Data Import Wizard]. Ensure that you import the first column of `sample-customers.csv` into the new `customerID` field you create in step 1.
 
-The sample data here is meant to represent a realistic scenario in which customer data is stored in Salesforce, but Order and Product data is in Amazon RDS. Even though there are disparate data sources, the Order table has a foreign key identifying the customer who placed the order. If this natural key can also be found in Salesforce, it can be used to create an Indirect Lookup that links Orders to Accounts.
+The sample data in `sample-customers.csv` represents a realistic scenario in which customer data is stored in Salesforce, but order and product data is in Amazon Relational Database Service (Amazon RDS). The order table has a foreign key identifying the customer who placed the order. If this natural key can also be found in Salesforce, it can be used to create an indirect lookup that links orders to accounts.
 
 After the AppSync is connected to Salesforce—read on to get to this step—you’ll see that the data in RDS references data imported in this step. The result is that Order data stored in AWS can be seen as a Related List on the Account page.
 
