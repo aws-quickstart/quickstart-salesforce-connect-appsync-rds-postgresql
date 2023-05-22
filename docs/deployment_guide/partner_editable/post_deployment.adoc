@@ -83,13 +83,13 @@ NOTE: Because a new Lambda function must be created and initialized, the query m
 When you get more familiar with AppSync, you can use the AppSync query explorer to create similar queries.
 
 ==== Test the API Key
-Use `curl` (sample below) or Postman to ping the endpoint with the API key and see that auth is functioning correctly. Here, we will run the same query as the prior step, but from outside the AWS console. Again, the purpose is to validate the connectivity and authentication, since Salesforce will make a similar HTTP call to AppSync.
+Test the API key and `auth` functionality, run a query from the command line to simulate a Salesforce HTTP call to AppSync. You can use the `curl` command or Postman. The following example that you can copy uses the `curl` command.
 [source,asciidoc]
 ....
 curl -XPOST -H "Content-Type:application/graphql" -H "x-api-key:YOUR-API-key" -d '{ "query": "query MyQuery {graphqlsample_MyOrder(where: {OrderId: {eq: \"ORD-100\"}}) {edges {node {OrderDate SourceIpAddress CustomerId Status TotalCost}}}}" }' https://YOUR-APPSYNC-ENDPOINT/graphql
 ....
 
-You should see the following data returned (formatted here for readability):
+Your results should match the following example, which has been formatted for readability.
 [source,asciidoc]
 ....
 {
@@ -110,7 +110,6 @@ You should see the following data returned (formatted here for readability):
   }
 }
 ....
-
 
 === Salesforce Configuration
 
