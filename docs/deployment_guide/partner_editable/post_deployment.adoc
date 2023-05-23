@@ -5,13 +5,13 @@
 === Test the deployment
 
 ==== Copy the database secret ARN from Secrets Manager
-. Sign in to the AWS Management Console and open the https://console.aws.amazon.com/secretsmanager/[Secrets Manager console].
+. Sign in to the AWS Management Console and open the https://console.aws.amazon.com/secretsmanager/[Secrets Manager console^].
 . In the left navigation pane, choose *Secrets*.
 . Choose the secret for your deployment, either `/graphqlrdsserverless/dbsecret` (Aurora Serverless v.1) or `/graphqlrds/dbsecret` (Aurora PostgreSQL-compatible).
 . On the secret details page, copy the *Secret ARN*.
 
 ==== Run a SQL query to test the database
-. Open the https://console.aws.amazon.com/rds/[Amazon RDS console].
+. Open the https://console.aws.amazon.com/rds/[Amazon RDS console^].
 . In the left navigation pane, choose *Query Editor*.
 . For *Database instance or cluster*, choose your database cluster.
 . For *Database username*, choose *Connect with a Secrets Manager ARN*.
@@ -29,7 +29,7 @@ SELECT * FROM graphqlsample.my_order WHERE order_id = 'ORD-100';
 . Choose *Run* and the query editor displays the results.
 
 ==== Run a GraphQL query to test the AppSync API
-. Open the https://console.aws.amazon.com/appsync/[AWS AppSync console].
+. Open the https://console.aws.amazon.com/appsync/[AWS AppSync console^].
 . In the left navigation pane, choose APIs.
 . Choose the deployment GraphQL API.
 . In the left navigation pane, choose *Queries*.
@@ -113,29 +113,29 @@ Your results should match the following, which are formatted for readability.
 
 === Salesforce configuration
 
-==== Load sample data into Salesforce
+Use the sample data provided with the solution to demonstrate how to augment Salesforce customer data with order data stored in an external database. The sample data simulates a scenario in which customer data is stored in Salesforce and order and product data is stored in Amazon Relational Database Service (Amazon RDS).
 
-Use the solution’s sample data (`sample-customers.csv`) to test the connection between Salesforce and AWS AppSync. The sample data simulates a scenario in which customer data is stored in Salesforce and order and product data is stored in Amazon Relational Database Service (Amazon RDS). The order table has a foreign key identifying the customer who placed the order. If this natural key can also be found in Salesforce, it can be used to create an indirect lookup that links orders to accounts.
+==== Step 1: Load sample data into Salesforce.
 
+. Download `sample-customers.csv` from ... .
 . Sign in to your Salesforce org.
-. Create a text field on the `customerID` account object. Ensure that you mark the text field as an external ID and unique.
-. Import `sample-customers.csv` as accounts and contacts using the https://trailhead.salesforce.com/content/learn/projects/import-and-export-with-data-management-tools/use-the-data-import-wizard[Data Import Wizard]. Ensure that you import the first column of `sample-customers.csv` into the new `customerID` field you create in step 2.
+. Create a text field in the standard customerID account object. In *General Options*, ensure that you choose the *Unique* and *External ID* settings.
+. Use the Salesforce Data Import Wizard to import the sample data in sample-customers.csv. For *What kind of data are you importing?*, choose *Accounts and Contacts*. Ensure that you import the first column of `sample-customers.csv` into the new `customerID` field you created previously. For more information, refer to https://trailhead.salesforce.com/content/learn/projects/import-and-export-with-data-management-tools/use-the-data-import-wizard[Use the Data Import Wizard^].
 
-After you connect Salesforce to AWS AppSync, the data from the external system appears as a related list on the Salesforce account page.
+==== Step 2: Configure a named credential in Salesforce.
 
-==== Configure the named credential
+Configure a https://help.salesforce.com/s/articleView?id=sf.graphQL_named_credentials_external_credentials.htm&type=5[Salesforce named credential^] so that Salesforce can invoke AWS services.
 
-Configure a https://help.salesforce.com/s/articleView?id=sf.graphQL_named_credentials_external_credentials.htm&type=5[Salesforce named credential] so that Salesforce can invoke AWS services.
+==== Step 3: Configure an external data source and external object in Salesforce
 
-==== Configure the external data source
+Configure an https://help.salesforce.com/s/articleView?id=sf.graphQL_add_external_data_source.htm&type=5[external data source^] for the AppSync API and use the exposed metadata to help create https://help.salesforce.com/s/articleView?id=sf.graphQL_sync_external_data_source.htm&type=5[Salesforce external objects^]. For more information, refer to https://help.salesforce.com/s/articleView?id=sf.salesforce_connect_graphQL.htm&type=5[Access External Data with the Salesforce Connect Adapter for GraphQL^].
 
-Configure an https://help.salesforce.com/s/articleView?id=sf.graphQL_add_external_data_source.htm&type=5[external data source] for the AppSync API and use the exposed metadata to help create https://help.salesforce.com/s/articleView?id=sf.graphQL_sync_external_data_source.htm&type=5[Salesforce external objects]. For more information, refer to https://help.salesforce.com/s/articleView?id=sf.salesforce_connect_graphQL.htm&type=5[Access External Data with the Salesforce Connect Adapter for GraphQL].
+==== Step 4: Make external data appear in Salesforce to end users.
 
-==== Make the data appear in Salesforce
+In Salesforce, edit the *Customer ID* field on the new order object you created in Step 3. Change the field type to *Indirect Lookup Relationship*. Configure the field to link to the *Account* field by way of the field you created in the standard CustomerID object in Step 1. For more information, refer to to https://trailhead.salesforce.com/content/learn/projects/quickstart-lightning-connect/quickstart-lightning-connect3#:~:text=An%20indirect%20lookup%20relationship%20is,links%20standard%20or%20custom%20objects[Create an Indirect Lookup Relationship^].
 
-Now that Salesforce has access to the external data, you can make it appear to your Salesforce end users. For the purposes of this test, edit the *Customer ID* field on the new Order object and click Change Field Type to make it an Indirect Lookup to the Account field linked via the *Customer ID* field you added to that standard object.
+After you create an indirect lookup, Salesforce adds a new related list on the *Account* page. To make the order data appear to Salesforce end users, add the related list for orders to the page layout for the account object. For more information, refer to https://help.salesforce.com/s/articleView?id=sf.emergency_response_add_related_lists_page_layout.htm&type=5[Add Related Lists to Page Layouts^]. This provides a convenient view of a customer's recent orders for support agents and sellers working in Salesforce.
 
-Once you add the Related List for Orders to the Page Layout for Account, you’ll be able to see the order data from AWS in the context of the customer. This provides a convenient view of a customer's recent orders for support agents and sellers working in Salesforce.
 
 ==== Attach your own database table
 
