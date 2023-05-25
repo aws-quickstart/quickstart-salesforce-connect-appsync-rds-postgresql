@@ -113,11 +113,16 @@ Your results should match the following, which are formatted for readability.
 
 === Salesforce configuration
 
+To test the solution, create a sample data file containing the following fields:
+customer_id,customer_name,type,industry,phone,address,city,state,zip,contact_first_name,contact_last_name,contact_email,contact_phone,contact_title.
+
+NOTE: You can generate mock data and save them as a CSV file using https://www.mockaroo.com/[Mockaroo^].
+
 Use the sample data provided with the solution to demonstrate how to augment Salesforce customer data with order data stored in an external database. The sample data simulates a scenario in which customer data is stored in Salesforce and order and product data is stored in Amazon Relational Database Service (Amazon RDS).
 
 ==== Step 1: Load sample data into Salesforce.
 
-. Download `sample-customers.csv` from ... .
+. Download `sample-customers.csv` from the solution https://github.com/aws-quickstart/quickstart-salesforce-connect-appsync-rds-postgresql/tree/doc-edits/docs/deployment_guide/sample-data/sample-customers.csv[repository^].
 . Sign in to your Salesforce org.
 . Create a text field in the standard customerID account object. In *General Options*, ensure that you choose the *Unique* and *External ID* settings.
 . Use the Salesforce Data Import Wizard to import the sample data in sample-customers.csv. For *What kind of data are you importing?*, choose *Accounts and Contacts*. Ensure that you import the first column of `sample-customers.csv` into the new `customerID` field you created previously. For more information, refer to https://trailhead.salesforce.com/content/learn/projects/import-and-export-with-data-management-tools/use-the-data-import-wizard[Use the Data Import Wizard^].
@@ -137,11 +142,9 @@ In Salesforce, edit the *Customer ID* field on the new order object you created 
 After you create an indirect lookup, Salesforce adds a new related list on the *Account* page. To make the order data appear to Salesforce end users, add the related list for orders to the page layout for the account object. For more information, refer to https://help.salesforce.com/s/articleView?id=sf.emergency_response_add_related_lists_page_layout.htm&type=5[Add Related Lists to Page Layouts^]. This provides a convenient view of a customer's recent orders for support agents and sellers working in Salesforce.
 
 
-==== Attach your own database table
+==== Attach your own database table (in the same RDS instance)
 
-Once you’ve gotten the out-of-box demo working, you can think about how to surface your own RDS tables to AppSync and Salesforce.
-
-If the tables are in the same RDS instance, you only need to do the following:
+To surface your own Amazon RDS tables to AppSync and Salesforce. If the tables are in the same RDS instance, you only need to do the following:
 
 * Update the Schema in AppSync by adding the `type` and `input` declarations for the additional table
 ** Follow the pattern you see in the `Graphqlsample_MyOrder` type to get the syntax correct.
@@ -152,6 +155,7 @@ If the tables are in the same RDS instance, you only need to do the following:
 * Add additional entries in the Parameter Store in Systems Manager to specify the metadata.
 ** Follow the example in `/appsync/typemetadata/Graphqlsample_MyOrder` and create an additional parameter for each table, including the `fieldTypes`, `keyColumns`, etc.
 
+==== Attach your own database table (in a different RDS instance)
 If you are using a different RDS instance, you’ll also need to add the RDS credentials to the Secrets Manager and set up the port forwarding so that the resolver can have a persistent connection to RDS. If you are unsure about this element of the infrastructure, contact AWS support.
 
 After the new GraphQL type is successfully added to the API endpoint (which you should validate with `curl`), you’ll need to go back to your External Data Source definition in Salesforce and Sync the metadata so that Salesforce Connect can pull in the new object(s) and fields. From there, you can decide where exactly to surface this data in the Salesforce UI.
