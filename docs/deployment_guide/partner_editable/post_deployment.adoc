@@ -111,52 +111,46 @@ Your results should match the following, which are formatted for readability.
 }
 ....
 
-=== Salesforce configuration
+=== Salesforce configuration tutorial
 
-Use the sample data provided with the solution to demonstrate how to augment Salesforce customer data with order data stored in an external database. The sample data simulates a scenario in which customer data is stored in Salesforce and order and product data is stored in Amazon Relational Database Service (Amazon RDS).
+Complete the following tutorial to learn how to configure Salesforce to view and interact with external data without copying or storing them. Using a sample data set, these instructions demonstrate how to augment Salesforce customer data with order data stored externally.
 
-Create a sample data file containing the following fields:
+//Use the sample data provided with the solution to demonstrate how to augment Salesforce customer data with order data stored in an external database. The sample data simulates a scenario in which customer data is stored in Salesforce and order and product data is stored in Amazon Relational Database Service (Amazon RDS).
+
+//This provides a convenient view of a customer's recent orders for support agents and sellers working in Salesforce.
+
+. Create a sample data file containing the following fields:
 `customer_id`, `customer_name`, `type`, `industry`, `phone`, `address`, `city`, `state`, `zip`, `contact_first_name`, `contact_last_name`, `contact_email`, `contact_phone`, and `contact_title`.
 
++
 NOTE: You can generate mock data and save them as a CSV file using https://www.mockaroo.com/[Mockaroo^].
-
-
-
-==== Step 1: Load sample data into Salesforce.
 
 . Sign in to your Salesforce org.
 . Create a text field in the standard customerID account object. In *General Options*, ensure that you choose the *Unique* and *External ID* settings.
-. Use the Salesforce Data Import Wizard to import your sample data. For *What kind of data are you importing?*, choose *Accounts and Contacts*. Ensure that you import the first column of your file (`customer_id`) into the new `customerID` field you create in the previous step. For more information, refer to https://trailhead.salesforce.com/content/learn/projects/import-and-export-with-data-management-tools/use-the-data-import-wizard[Use the Data Import Wizard^].
+. Use the Salesforce Data Import Wizard to import your sample data.
+.. For *What kind of data are you importing?*, choose *Accounts and Contacts*.
+.. Ensure that you import the first column of your file (`customer_id`) into the new `customerID` field you create in the previous step. For more information, refer to https://trailhead.salesforce.com/content/learn/projects/import-and-export-with-data-management-tools/use-the-data-import-wizard[Use the Data Import Wizard^].
+. Configure a https://help.salesforce.com/s/articleView?id=sf.graphQL_named_credentials_external_credentials.htm&type=5[Salesforce named credential^] so that Salesforce can invoke AWS services.
+. Configure an https://help.salesforce.com/s/articleView?id=sf.graphQL_add_external_data_source.htm&type=5[external data source^] for the AppSync API and use the exposed metadata to help create https://help.salesforce.com/s/articleView?id=sf.graphQL_sync_external_data_source.htm&type=5[Salesforce external objects^]. For more information, refer to https://help.salesforce.com/s/articleView?id=sf.salesforce_connect_graphQL.htm&type=5[Access External Data with the Salesforce Connect Adapter for GraphQL^].
+. Edit the *Customer ID* field on the new order object you created in step 6.
+.. Change the field type to *Indirect Lookup Relationship*.
+.. Configure the field to link to the *Account* field by way of the field you created in the standard `CustomerID` object in step 2. For more information, refer to to https://trailhead.salesforce.com/content/learn/projects/quickstart-lightning-connect/quickstart-lightning-connect3#:~:text=An%20indirect%20lookup%20relationship%20is,links%20standard%20or%20custom%20objects[Create an Indirect Lookup Relationship^].
+. After you create an indirect lookup, Salesforce adds a new related list on the *Account* page. To make the order data appear to Salesforce end users, add the related list for orders to the page layout for the account object. For more information, refer to https://help.salesforce.com/s/articleView?id=sf.emergency_response_add_related_lists_page_layout.htm&type=5[Add Related Lists to Page Layouts^].
 
-==== Step 2: Configure a named credential in Salesforce.
+After completing the tutorial, you can link your own tables to AppSync and Salesforce.
 
-Configure a https://help.salesforce.com/s/articleView?id=sf.graphQL_named_credentials_external_credentials.htm&type=5[Salesforce named credential^] so that Salesforce can invoke AWS services.
+==== Attach your own database table (in the same RDS DB instance)
 
-==== Step 3: Configure an external data source and external object in Salesforce
-
-Configure an https://help.salesforce.com/s/articleView?id=sf.graphQL_add_external_data_source.htm&type=5[external data source^] for the AppSync API and use the exposed metadata to help create https://help.salesforce.com/s/articleView?id=sf.graphQL_sync_external_data_source.htm&type=5[Salesforce external objects^]. For more information, refer to https://help.salesforce.com/s/articleView?id=sf.salesforce_connect_graphQL.htm&type=5[Access External Data with the Salesforce Connect Adapter for GraphQL^].
-
-==== Step 4: Make external data appear in Salesforce to end users.
-
-In Salesforce, edit the *Customer ID* field on the new order object you created in Step 3. Change the field type to *Indirect Lookup Relationship*. Configure the field to link to the *Account* field by way of the field you created in the standard CustomerID object in Step 1. For more information, refer to to https://trailhead.salesforce.com/content/learn/projects/quickstart-lightning-connect/quickstart-lightning-connect3#:~:text=An%20indirect%20lookup%20relationship%20is,links%20standard%20or%20custom%20objects[Create an Indirect Lookup Relationship^].
-
-After you create an indirect lookup, Salesforce adds a new related list on the *Account* page. To make the order data appear to Salesforce end users, add the related list for orders to the page layout for the account object. For more information, refer to https://help.salesforce.com/s/articleView?id=sf.emergency_response_add_related_lists_page_layout.htm&type=5[Add Related Lists to Page Layouts^]. This provides a convenient view of a customer's recent orders for support agents and sellers working in Salesforce.
-
-
-==== Attach your own database table (in the same RDS instance)
-
-To surface your own Amazon RDS tables to AppSync and Salesforce. If the tables are in the same RDS instance, you only need to do the following:
-
-* Update the Schema in AppSync by adding the `type` and `input` declarations for the additional table
-** Follow the pattern you see in the `Graphqlsample_MyOrder` type to get the syntax correct.
-* Make sure to click *Save Schema* to capture your updates.
-* Attach the included resolver to the query and mutations for the new table.
-** In the *Resolvers* section of the Schema tab in AWS AppSync console, select the query or mutation, and click *Attach*. In *Create new resolver*, select the Lambda function from the dropdown list.
-** Repeat the process to attach the resolver for all the queries and mutations defined in the GraphQL schema. For example, if Salesforce Connect can perform create, read, update and delete operations on records, you must attach the resolver four times.
-* Add additional entries in the Parameter Store in Systems Manager to specify the metadata.
-** Follow the example in `/appsync/typemetadata/Graphqlsample_MyOrder` and create an additional parameter for each table, including the `fieldTypes`, `keyColumns`, etc.
+. Sign in to the AWS Management Console and open the https://console.aws.amazon.com/appsync/[AWS AppSync console^].
+. Update the Schema in AppSync by adding the `type` and `input` declarations for the additional table. For the correct syntax, refer to the the pattern in the `Graphqlsample_MyOrder` type.
+. Choose *Save Schema* to capture your updates.
+. Attach the included resolver to the query and mutations for the new table.
+.. In the *Resolvers* section of the Schema tab in AWS AppSync console, select the query or mutation, and choose *Attach*.
+.. On the *Create new Resolver* page, for *Data source name*, choose the Lambda function.
+.. Repeat the process to attach the resolver for all the queries and mutations defined in the GraphQL schema. For example, if Salesforce Connect can perform create, read, update and delete operations on records, you must attach the resolver four times.
+. Add additional entries in the Parameter Store in Systems Manager to specify the metadata. Follow the example in `/appsync/typemetadata/Graphqlsample_MyOrder` and create an additional parameter for each table, including `fieldTypes` and `keyColumns`.
 
 ==== Attach your own database table (in a different RDS instance)
-If you are using a different RDS instance, you’ll also need to add the RDS credentials to the Secrets Manager and set up the port forwarding so that the resolver can have a persistent connection to RDS. If you are unsure about this element of the infrastructure, contact AWS support.
+If you are using a different RDS DB instance, add the Amazon RDS credentials to Secrets Manager. Set up port forwarding so that the resolver can have a persistent connection to Amazon RDS. For more information, refer to https://docs.aws.amazon.com/secretsmanager/latest/userguide/integrating_how-services-use-secrets_RDS.html[How Amazon RDS uses AWS Secrets Manager^] or contact AWS support.
 
-After the new GraphQL type is successfully added to the API endpoint (which you should validate with `curl`), you’ll need to go back to your External Data Source definition in Salesforce and Sync the metadata so that Salesforce Connect can pull in the new object(s) and fields. From there, you can decide where exactly to surface this data in the Salesforce UI.
+After the new GraphQL type is successfully added to the API endpoint, validate the endpoint with `curl`. Then, in your External Data Source definition in Salesforce, sync the metadata so that Salesforce Connect can pull in the new object(s) and fields. From there, you can decide where exactly to make this data appear in the Salesforce UI.
