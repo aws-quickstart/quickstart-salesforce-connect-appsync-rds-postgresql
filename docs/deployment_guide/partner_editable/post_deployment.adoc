@@ -126,7 +126,7 @@ Complete the following tutorial to learn how to configure Salesforce to view and
 NOTE: You can generate mock data and save them as a CSV file using https://www.mockaroo.com/[Mockaroo^].
 
 . Sign in to your Salesforce org.
-. Create a text field in the standard customerID account object. In *General Options*, ensure that you choose the *Unique* and *External ID* settings.
+. Create a text field in the standard `customerID` account object. In *General Options*, ensure that you choose the *Unique* and *External ID* settings.
 . Use the Salesforce Data Import Wizard to import your sample data.
 .. For *What kind of data are you importing?*, choose *Accounts and Contacts*.
 .. Ensure that you import the first column of your file (`customer_id`) into the new `customerID` field you create in the previous step. For more information, refer to https://trailhead.salesforce.com/content/learn/projects/import-and-export-with-data-management-tools/use-the-data-import-wizard[Use the Data Import Wizard^].
@@ -134,7 +134,7 @@ NOTE: You can generate mock data and save them as a CSV file using https://www.m
 . Configure an https://help.salesforce.com/s/articleView?id=sf.graphQL_add_external_data_source.htm&type=5[external data source^] for the AppSync API and use the exposed metadata to help create https://help.salesforce.com/s/articleView?id=sf.graphQL_sync_external_data_source.htm&type=5[Salesforce external objects^]. For more information, refer to https://help.salesforce.com/s/articleView?id=sf.salesforce_connect_graphQL.htm&type=5[Access External Data with the Salesforce Connect Adapter for GraphQL^].
 . Edit the *Customer ID* field on the new order object you created in step 6.
 .. Change the field type to *Indirect Lookup Relationship*.
-.. Configure the field to link to the *Account* field by way of the field you created in the standard `CustomerID` object in step 2. For more information, refer to to https://trailhead.salesforce.com/content/learn/projects/quickstart-lightning-connect/quickstart-lightning-connect3#:~:text=An%20indirect%20lookup%20relationship%20is,links%20standard%20or%20custom%20objects[Create an Indirect Lookup Relationship^].
+.. Configure the field to link to the *Account* field by way of the field you created in the standard `CustomerID` object in step 3. For more information, refer to https://trailhead.salesforce.com/content/learn/projects/quickstart-lightning-connect/quickstart-lightning-connect3#:~:text=An%20indirect%20lookup%20relationship%20is,links%20standard%20or%20custom%20objects[Create an Indirect Lookup Relationship^].
 . After you create an indirect lookup, Salesforce adds a new related list on the *Account* page. To make the order data appear to Salesforce end users, add the related list for orders to the page layout for the account object. For more information, refer to https://help.salesforce.com/s/articleView?id=sf.emergency_response_add_related_lists_page_layout.htm&type=5[Add Related Lists to Page Layouts^].
 
 After completing the tutorial, you can link your own tables to AppSync and Salesforce.
@@ -142,7 +142,7 @@ After completing the tutorial, you can link your own tables to AppSync and Sales
 ==== Attach your own database table (in the same RDS DB instance)
 
 . Sign in to the AWS Management Console and open the https://console.aws.amazon.com/appsync/[AWS AppSync console^].
-. Update the Schema in AppSync by adding the `type` and `input` declarations for the additional table. For the correct syntax, refer to the the pattern in the `Graphqlsample_MyOrder` type.
+. Update the Schema in AppSync by adding the `type` and `input` declarations for the additional table. For the correct syntax, refer to the pattern in the `Graphqlsample_MyOrder` type.
 . Choose *Save Schema* to capture your updates.
 . Attach the included resolver to the query and mutations for the new table.
 .. In the *Resolvers* section of the Schema tab in AWS AppSync console, select the query or mutation, and choose *Attach*.
