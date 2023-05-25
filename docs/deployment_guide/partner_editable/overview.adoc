@@ -1,7 +1,6 @@
 This guide covers the information you need to deploy the {partner-product-name} Partner Solution in the AWS Cloud.
 
-// Fill in the info in <angle brackets> for use on the landing page only: 
-This Amazon Web Services (AWS) Partner Solution deploys Salesforce Connect Adapter for GraphQL in the AWS Cloud so that customers can leverage data stored in Amazon RDS from within Salesforce—without copying the records themselves—with the help of Amazon AppSync and Salesforce Connect. For more information, refer to the https://developer.salesforce.com/blogs/2023/02/salesforce-connect-adapter-for-graphql-now-in-pilot?[Salesforce Connect Adapter for GraphQL documentation^].
+// Fill in the info in <angle brackets> for use on the landing page only:
 
 // Deploying this solution does not guarantee an organization’s compliance with any laws, certifications, policies, or other regulations. [Uncomment this statement only for solutions that relate to compliance. We'll add the corresponding reference part to the landing page and get legal approval before publishing.]
 

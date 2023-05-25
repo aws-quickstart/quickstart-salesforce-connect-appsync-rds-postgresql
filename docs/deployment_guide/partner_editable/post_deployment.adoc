@@ -2,31 +2,40 @@
 
 == Postdeployment steps
 
-=== Test your deployment
+=== Test the deployment
 
-==== Note the Database Information in Secrets Manager
-* From the AWS console, navigate to Secrets Manager, and choose the secret (it would be either _/graphqlrdsserverless/dbsecret_ or _/graphqlrds/dbsecret_, depending on the configuration.)
-* Copy the ARN under _Secret ARN_.
+==== Copy the database secret ARN from Secrets Manager
+. Sign in to the AWS Management Console and open the https://console.aws.amazon.com/secretsmanager/[Secrets Manager console^].
+. In the left navigation pane, choose *Secrets*.
+. Choose the secret for your deployment, either `/graphqlrdsserverless/dbsecret` (Aurora Serverless v.1) or `/graphqlrds/dbsecret` (Aurora PostgreSQL-compatible).
+. On the secret details page, copy the *Secret ARN*.
 
-==== Test RDS with a SQL Query
-* From the AWS console, navigate to RDS.
-* Choose Query Editor from the left navigation pane.
-* Choose your database cluster under _Database instance_ or _cluster_
-* Under Database username choose _Connect with a Secrets Manager ARN_
-* Enter the ARN that you copied from the previous step ("_Note the Database Information in Secrets Manager_")
-* Under _Enter the name of the database_, enter _graphqlrds_
-* Run a simple query to confirm that everything is working properly. Copy/paste the statment below to save time, then click Run and view the results in the lower portion of the screen.
+==== Run a SQL query to test the database
+. Open the https://console.aws.amazon.com/rds/[Amazon RDS console^].
+. In the left navigation pane, choose *Query Editor*.
+. For *Database instance or cluster*, choose your database cluster.
+. For *Database username*, choose *Connect with a Secrets Manager ARN*.
+. Enter the database secret ARN that you copy from Secrets Manager. Refer to link:#_copy_the_database_secret_arn_from_secrets_manager[Copy the database ARN from Secrets Manager], earlier in this guide.
+. For *Enter the name of the database*, enter `graphqlrds`.
+. In the query editor, enter the following statement.
+
++
 [source,sql]
 ....
 SELECT * FROM graphqlsample.my_order WHERE order_id = 'ORD-100';
 ....
 
-==== Test the AppSync API with a GraphQL Query
-* From the AWS console, navigate to AWS AppSync.
-* Choose the GraphQL API that was created by CloudFormation.
-* Choose _Queries_ from the left navigation pane.
-* Run a simple GraphQL query in the Queries console to see that the API is returning the values as expected. This example runs a query via GraphQL which is functionally the same as the SQL query in the prior step. Paste the following into the center pane and click the Execute Query button (with the arrow icon).
-** When you get more familiar with these concepts, you can use the Explorer to drill in and build up a similar query.
+[start=8]
+. Choose *Run* and the query editor displays the results.
+
+==== Run a GraphQL query to test the AppSync API
+. Open the https://console.aws.amazon.com/appsync/[AWS AppSync console^].
+. In the left navigation pane, choose APIs.
+. Choose the deployment GraphQL API.
+. In the left navigation pane, choose *Queries*.
+. On the *Queries* page, enter the following query code. The code provided runs a GraphQL query identical to the previous link:#_run_a_sql_to_test_the_database[SQL query].
+
++
 [source,asciidoc]
 ....
 query MyQuery {
@@ -44,7 +53,10 @@ query MyQuery {
 }
 ....
 
-After you click the Execute Query button, it may take a minute or so to see the first set of results due to Lambda's cold start. When it returns, you should see the following in the right-hand pane:
+[start=6]
+. Choose the play button to run the query. The query editor displays the results in the right pane. Your results should match the following example.
+
++
 [source,asciidoc]
 ....
 {
@@ -66,14 +78,18 @@ After you click the Execute Query button, it may take a minute or so to see the 
 }
 ....
 
+NOTE: Because a new Lambda function must be created and initialized, the query may take a minute or so to display the results.
+
+When you get more familiar with AppSync, you can use the AppSync query explorer to create similar queries.
+
 ==== Test the API Key
-Use `curl` (sample below) or Postman to ping the endpoint with the API key and see that auth is functioning correctly. Here, we will run the same query as the prior step, but from outside the AWS console. Again, the purpose is to validate the connectivity and authentication, since Salesforce will make a similar HTTP call to AppSync.
+Test the API key and `auth` functionality by running a query from the command line to simulate a Salesforce HTTP call to AppSync. You can use the `curl` command or Postman. The following example that you can copy uses the `curl` command.
 [source,asciidoc]
 ....
 curl -XPOST -H "Content-Type:application/graphql" -H "x-api-key:YOUR-API-key" -d '{ "query": "query MyQuery {graphqlsample_MyOrder(where: {OrderId: {eq: \"ORD-100\"}}) {edges {node {OrderDate SourceIpAddress CustomerId Status TotalCost}}}}" }' https://YOUR-APPSYNC-ENDPOINT/graphql
 ....
 
-You should see the following data returned (formatted here for readability):
+Your results should match the following, which are formatted for readability.
 [source,asciidoc]
 ....
 {
@@ -95,52 +111,46 @@ You should see the following data returned (formatted here for readability):
 }
 ....
 
+=== Salesforce configuration tutorial
 
-=== Salesforce Configuration
+Complete the following tutorial to learn how to configure Salesforce to view and interact with external data without copying or storing them. Using a sample data set, these instructions demonstrate how to augment Salesforce customer data with order data stored externally.
 
-==== Load Sample Data in Salesforce
+//Use the sample data provided with the solution to demonstrate how to augment Salesforce customer data with order data stored in an external database. The sample data simulates a scenario in which customer data is stored in Salesforce and order and product data is stored in Amazon Relational Database Service (Amazon RDS).
 
-Take advantage of the sample data here to see how customer data in Salesforce can be augmented with data from external systems:
+//This provides a convenient view of a customer's recent orders for support agents and sellers working in Salesforce.
 
-* Log in to your Salesforce org.
-* Create a Text field on the Account object called `customerID`, making sure it is marked as both an *External ID* and *Unique*.
-* Import the data the `sample-customers.csv` as Accounts and Contacts using the https://trailhead.salesforce.com/content/learn/projects/import-and-export-with-data-management-tools/use-the-data-import-wizard[Data Import Wizard], being careful to import the first column into the new `customerID` field.
+. Create a sample data file containing the following fields:
+`customer_id`, `customer_name`, `type`, `industry`, `phone`, `address`, `city`, `state`, `zip`, `contact_first_name`, `contact_last_name`, `contact_email`, `contact_phone`, and `contact_title`.
 
-The sample data here is meant to represent a realistic scenario in which customer data is stored in Salesforce, but Order and Product data is in Amazon RDS. Even though there are disparate data sources, the Order table has a foreign key identifying the customer who placed the order. If this natural key can also be found in Salesforce, it can be used to create an Indirect Lookup that links Orders to Accounts.
++
+NOTE: You can generate mock data and save them as a CSV file using https://www.mockaroo.com/[Mockaroo^].
 
-After the AppSync is connected to Salesforce—read on to get to this step—you’ll see that the data in RDS references data imported in this step. The result is that Order data stored in AWS can be seen as a Related List on the Account page.
+. Sign in to your Salesforce org.
+. Create a text field in the standard `customerID` account object. In *General Options*, ensure that you choose the *Unique* and *External ID* settings.
+. Use the Salesforce Data Import Wizard to import your sample data.
+.. For *What kind of data are you importing?*, choose *Accounts and Contacts*.
+.. Ensure that you import the first column of your file (`customer_id`) into the new `customerID` field you create in the previous step. For more information, refer to https://trailhead.salesforce.com/content/learn/projects/import-and-export-with-data-management-tools/use-the-data-import-wizard[Use the Data Import Wizard^].
+. Configure a https://help.salesforce.com/s/articleView?id=sf.graphQL_named_credentials_external_credentials.htm&type=5[Salesforce named credential^] so that Salesforce can invoke AWS services.
+. Configure an https://help.salesforce.com/s/articleView?id=sf.graphQL_add_external_data_source.htm&type=5[external data source^] for the AppSync API and use the exposed metadata to help create https://help.salesforce.com/s/articleView?id=sf.graphQL_sync_external_data_source.htm&type=5[Salesforce external objects^]. For more information, refer to https://help.salesforce.com/s/articleView?id=sf.salesforce_connect_graphQL.htm&type=5[Access External Data with the Salesforce Connect Adapter for GraphQL^].
+. Edit the *Customer ID* field on the new order object you created in step 6.
+.. Change the field type to *Indirect Lookup Relationship*.
+.. Configure the field to link to the *Account* field by way of the field you created in the standard `CustomerID` object in step 3. For more information, refer to https://trailhead.salesforce.com/content/learn/projects/quickstart-lightning-connect/quickstart-lightning-connect3#:~:text=An%20indirect%20lookup%20relationship%20is,links%20standard%20or%20custom%20objects[Create an Indirect Lookup Relationship^].
+. After you create an indirect lookup, Salesforce adds a new related list on the *Account* page. To make the order data appear to Salesforce end users, add the related list for orders to the page layout for the account object. For more information, refer to https://help.salesforce.com/s/articleView?id=sf.emergency_response_add_related_lists_page_layout.htm&type=5[Add Related Lists to Page Layouts^].
 
-==== Configure the Named Credential
+After completing the tutorial, you can link your own tables to AppSync and Salesforce.
 
-Configure a https://help.salesforce.com/s/articleView?id=sf.graphQL_named_credentials_external_credentials.htm&type=5[Salesforce Named Credential] so that Salesforce can invoke AWS services.
+==== Attach your own database table (in the same RDS DB instance)
 
-==== Configure the External Data Source
+. Sign in to the AWS Management Console and open the https://console.aws.amazon.com/appsync/[AWS AppSync console^].
+. Update the Schema in AppSync by adding the `type` and `input` declarations for the additional table. For the correct syntax, refer to the pattern in the `Graphqlsample_MyOrder` type.
+. Choose *Save Schema* to capture your updates.
+. Attach the included resolver to the query and mutations for the new table.
+.. In the *Resolvers* section of the Schema tab in AWS AppSync console, select the query or mutation, and choose *Attach*.
+.. On the *Create new Resolver* page, for *Data source name*, choose the Lambda function.
+.. Repeat the process to attach the resolver for all the queries and mutations defined in the GraphQL schema. For example, if Salesforce Connect can perform create, read, update and delete operations on records, you must attach the resolver four times.
+. Add additional entries in the Parameter Store in Systems Manager to specify the metadata. Follow the example in `/appsync/typemetadata/Graphqlsample_MyOrder` and create an additional parameter for each table, including `fieldTypes` and `keyColumns`.
 
-Configure an https://help.salesforce.com/s/articleView?id=sf.graphQL_add_external_data_source.htm&type=5[External Data Source] for the AppSync API and use the exposed metadata to help create https://help.salesforce.com/s/articleView?id=sf.graphQL_sync_external_data_source.htm&type=5[Salesforce External Objects].
+==== Attach your own database table (in a different RDS instance)
+If you are using a different RDS DB instance, add the Amazon RDS credentials to Secrets Manager. Set up port forwarding so that the resolver can have a persistent connection to Amazon RDS. For more information, refer to https://docs.aws.amazon.com/secretsmanager/latest/userguide/integrating_how-services-use-secrets_RDS.html[How Amazon RDS uses AWS Secrets Manager^] or contact AWS support.
 
-For further information, refer to the https://help.salesforce.com/s/articleView?id=sf.salesforce_connect_graphQL.htm&type=5[Salesforce documentation].
-
-==== Surface the Data in the Salesforce UI
-
-Salesforce has access to the external data at this point, though you’ll want to take a few more steps to surface it to your end users. For the purposes of this test, edit the *Customer ID* field on the new Order object and click Change Field Type to make it an Indirect Lookup to the Account field linked via the *Customer ID* field you added to that standard object.
-
-Once you add the Related List for Orders to the Page Layout for Account, you’ll be able to see the order data from AWS in the context of the customer. This provides a convenient view of a customer's recent orders for support agents and sellers working in Salesforce.
-
-==== Attach Your Own Database Table
-
-Once you’ve gotten the out-of-box demo working, you can think about how to surface your own RDS tables to AppSync and Salesforce.
-
-If the tables are in the same RDS instance, you only need to do the following:
-
-* Update the Schema in AppSync by adding the `type` and `input` declarations for the additional table
-** Follow the pattern you see in the `Graphqlsample_MyOrder` type to get the syntax correct.
-* Make sure to click *Save Schema* to capture your updates.
-* Attach the included resolver to the query and mutations for the new table.
-** In the *Resolvers* section of the Schema tab in AWS AppSync console, select the query or mutation, and click *Attach*. In *Create new resolver*, select the Lambda function from the dropdown list.
-** Repeat the process to attach the resolver for all the queries and mutations defined in the GraphQL schema. For example, if Salesforce Connect can perform create, read, update and delete operations on records, you must attach the resolver four times.
-* Add additional entries in the Parameter Store in Systems Manager to specify the metadata.
-** Follow the example in `/appsync/typemetadata/Graphqlsample_MyOrder` and create an additional parameter for each table, including the `fieldTypes`, `keyColumns`, etc.
-
-If you are using a different RDS instance, you’ll also need to add the RDS credentials to the Secrets Manager and set up the port forwarding so that the resolver can have a persistent connection to RDS. If you are unsure about this element of the infrastructure, contact AWS support.
-
-After the new GraphQL type is successfully added to the API endpoint (which you should validate with `curl`), you’ll need to go back to your External Data Source definition in Salesforce and Sync the metadata so that Salesforce Connect can pull in the new object(s) and fields. From there, you can decide where exactly to surface this data in the Salesforce UI.
+After the new GraphQL type is successfully added to the API endpoint, validate the endpoint with `curl`. Then, in your External Data Source definition in Salesforce, sync the metadata so that Salesforce Connect can pull in the new object(s) and fields. From there, you can decide where exactly to make this data appear in the Salesforce UI.
