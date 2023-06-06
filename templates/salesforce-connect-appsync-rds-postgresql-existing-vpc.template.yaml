@@ -13,22 +13,22 @@ Metadata:
           - PrivateSubnet2ID
           - AvailabilityZones
       - Label:
-          default: Choose a deployment option
+          default: Deployment option
         Parameters:
           - RDSClusterMode
       - Label:
-          default: RDS Standard Mode Configuration
+          default: RDS standard-mode configuration
         Parameters:
           - DBInstanceClass
       - Label:
-          default: RDS Serverless Mode Configuration
+          default: RDS serverless-mode configuration
         Parameters:
           - AutoPauseCluster
           - SecondsUntilAutoPause
           - MinCapacity
           - MaxCapacity
       - Label:
-          default: RDS Database Configuration
+          default: RDS database configuration
         Parameters:
           - DatabaseUserName
           - DatabaseName
@@ -46,7 +46,7 @@ Metadata:
           - MyOrderItemParameterName
           - MyProductParameterName
       - Label:
-          default: AWS Quick Start configuration
+          default: AWS Partner Solution configuration
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
@@ -59,13 +59,13 @@ Metadata:
       PrivateSubnet2ID:
         default: Private subnet 2 ID
       AvailabilityZones:
-        default: Availability zones
+        default: Availability Zones
       RDSClusterMode:
         default: RDS cluster mode
       DBInstanceClass:
         default: DB instance class
       AutoPauseCluster:
-        default: Auto pause cluster
+        default: Auto-pause cluster
       SecondsUntilAutoPause:
         default: Seconds until auto pause
       MinCapacity:
@@ -97,11 +97,11 @@ Metadata:
       RDSSchemaName:
         default: RDS schema name
       QSS3BucketName:
-        default: Quick Start S3 bucket name
+        default: Partner Solution S3 bucket name
       QSS3KeyPrefix:
-        default: Quick Start S3 key prefix
+        default: Partner Solution S3 key prefix
       QSS3BucketRegion:
-        default: Quick Start S3 bucket Region
+        default: Partner Solution S3 bucket Region
 
 Parameters:
   RDSClusterMode:
@@ -111,7 +111,7 @@ Parameters:
       - Standard
     Default: Serverless
     Description: >
-      Choose whether to deploy a standard Amazon Aurora or Serverless (v1).
+      Choose "Standard" to deploy a standard configuration of Amazon Aurora instead of Amazon Aurora Serverless v.1.
 
   AutoPauseCluster:
     Type: String
@@ -119,7 +119,7 @@ Parameters:
       - 'true'
       - 'false'
     Default: 'true'
-    Description: Do you want the serverless cluster to scale the capacity to 0 ACUs when cluster is idle?
+    Description: Choose "false" to disallow automatic pause of an idle, serverless Aurora DB cluster. With auto pause, a serverless cluster scales capacity to 0 Aurora capacity units (ACUs) when idle (no connections).
 
   SecondsUntilAutoPause:
     Type: Number
@@ -133,8 +133,7 @@ Parameters:
       - 86400
     Default: 300
     Description: >
-      The time, in seconds, before an Aurora DB cluster in serverless mode is paused (scale capacity
-      down to 0 ACU). Values are 5/10/20 minutes, 1/4/8/24 hours.
+      Enter the time, in seconds, before an idle, serverless Aurora DB cluster scales capacity to 0 ACUs (auto-pauses). Valid entries are 300 (five minutes), 600 (10 minutes), 1200 (20 minutes), 3600 (one hour), 14400 (four hours), 28800 (eight hours), and 86400 (24 hours).
 
   MinCapacity:
     Type: Number
@@ -149,7 +148,7 @@ Parameters:
       - 384
     Default: 2
     Description: >
-      The minimum capacity for an Aurora DB cluster in serverless DB engine mode.
+      Enter the minimum capacity for a serverless Aurora DB cluster.
 
   MaxCapacity:
     Type: Number
@@ -164,47 +163,63 @@ Parameters:
       - 384
     Default: 16
     Description: >
-      The maximum capacity for an Aurora DB cluster in serverless DB engine mode. 
-      This value should be greater than or equal to MinCapacity. 
+      Enter the maximum capacity for a serverless Aurora DB cluster. Must be greater than or equal to minimum capacity.
 
   VPCID:
     Type: AWS::EC2::VPC::Id
-    Description: ID of your existing VPC (e.g., vpc-0343606e).
+    Description: ID of your existing VPC (for example, "vpc-0343606e").
   PrivateSubnet1ID:
     Type: AWS::EC2::Subnet::Id
     Description: >-
-      ID of the private subnet in Availability Zone 1 of your existing VPC
+      ID of the private subnet in Availability Zone 1 of your existing VPC.
       (example: subnet-fe9a8b32).
   PrivateSubnet2ID:
     Type: AWS::EC2::Subnet::Id
     Description: >-
-      ID of the private subnet in Availability Zone 2 of your existing VPC
+      ID of the private subnet in Availability Zone 2 of your existing VPC.
       (example: subnet-be8b01ea).
   AvailabilityZones:
-    Description: List of Availability Zones to use for the subnets in the VPC. Only
-      two Availability Zones are used for this deployment, and the logical order of
-      your selections is preserved.
+    Description: Choose two Availability Zones to use for this deployment.
     Type: List<AWS::EC2::AvailabilityZone::Name>
 
   QSS3BucketName:
-    AllowedPattern: "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$"
-    ConstraintDescription: "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+    AllowedPattern: ^[0-9a-z]+([0-9a-z-\.]*[0-9a-z])*$
+    ConstraintDescription: >-
+      The S3 bucket name can include numbers, lowercase letters,
+      and hyphens (-), but it cannot start or end with a hyphen.
     Default: aws-quickstart
-    Description: "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+    Description: >-
+      Name of the S3 bucket for your copy of the deployment assets. Keep the default
+      name unless you are customizing the template. Changing the name updates code
+      references to point to a new location.
+    MinLength: 3
+    MaxLength: 63
     Type: String
   QSS3BucketRegion:
-    Default: 'us-east-1'
-    Description: 'The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.'
+    Default: us-east-1
+    Description: >-
+      AWS Region where the S3 bucket (QSS3BucketName) is hosted. Keep
+      the default Region unless you are customizing the template. Changing the Region
+      updates code references to point to a new location. When using your own bucket,
+      specify the Region.
     Type: String
   QSS3KeyPrefix:
-    AllowedPattern: "^[0-9a-zA-Z-/]*$"
-    ConstraintDescription: "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
+    AllowedPattern: ^([0-9a-zA-Z!-_\.\*'\(\)/]+/)*$
+    ConstraintDescription: >-
+      The S3 key prefix can include numbers, lowercase letters, uppercase letters,
+      hyphens (-), underscores (_), periods (.), asterisks (*), single quotes ('),
+      open parenthesis ((), close parenthesis ()), and forward slashes (/). End the
+      prefix with a forward slash.
     Default: quickstart-salesforce-connect-appsync-rds-postgresql/
-    Description: "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
+    Description: >-
+      S3 key prefix that is used to simulate a folder for your copy of the
+      deployment assets. Keep the default prefix unless you are customizing
+      the template. Changing the prefix updates code references to point to
+      a new location.
     Type: String
 
   DBInstanceClass:
-    Description: RDS Instance Class
+    Description: RDS instance class.
     Type: String
     Default: db.t3.medium
     AllowedValues:
@@ -217,11 +232,11 @@ Parameters:
       - db.t3.large
 
   DatabaseUserName:
-    Description: Database user name
+    Description: Database user name.
     Type: String
     Default: dbadmin
   DatabaseName:
-    Description: Database name
+    Description: Database name.
     Type: String
     Default: graphqlrds
   DatabasePort:
@@ -229,20 +244,20 @@ Parameters:
     Default: 5432
 
   MyOrderParameterName:
-    Description: My order parameter name
+    Description: My order parameter name.
     Type: String
     Default: "/appsync/typemetadata/Graphqlsample_MyOrder"
   MyOrderItemParameterName:
-    Description: My order item parameter name
+    Description: My order item parameter name.
     Type: String
     Default: "/appsync/typemetadata/Graphqlsample_MyOrderItem"
   MyProductParameterName:
-    Description: My product parameter name
+    Description: My product parameter name.
     Type: String
     Default: "/appsync/typemetadata/Graphqlsample_MyProduct"
 
   AppSyncAuthenticationType:
-    Description: How do you want to authenticate to the AppSync endpoint?
+    Description: Choose "AWS_IAM" to authenticate interactions with AWS AppSync using AWS IAM permissions instead of API keys.
     Type: String
     Default: API_KEY
     AllowedValues:
@@ -250,12 +265,12 @@ Parameters:
       - API_KEY
 
   GraphQLResolverName:
-    Description: Resolver name
+    Description: Resolver name.
     Type: String
     Default: graphql.resolvers.sql-1.0.0.jar
 
   GraphQLSchemaLocation:
-    Description: Provide the location of GraphQL schema.
+    Description: Enter the location of GraphQL schema.
     Type: String
 
   GraphQLSchemaName:
@@ -263,11 +278,11 @@ Parameters:
     Type: String
 
   RDSSchemaLocation:
-    Description: Provide the location of RDS schema.
+    Description: Enter the location of RDS schema.
     Type: String
 
   RDSSchemaName:
-    Description: RDS Schema name
+    Description: RDS schema name.
     Type: String
 
 
