@@ -16,7 +16,7 @@ As shown in <<architecture1>>, this Partner Solution sets up the following:
 * AWS AppSync to host a public GraphQL API endpoint. To access Aurora data from Salesforce, the solution uses the Salesforce external objects subsystem to invoke the GraphQL connect adapter. The adapter translates requests into GraphQL queries, which it sends to the GraphQL API endpoint hosted on AWS AppSync.
 * An AWS Lambda function to serve as a GraphQL resolver. It converts GraphQL requests to SQL queries and runs the queries on the Amazon Aurora database.
 * In the public subnets, managed NAT gateways to allow outbound internet access for resources in the private subnets.*
-* In the private subnets, Amazon Aurora database instances. During deployment, you choose Aurora PostgreSQL-compatible or Aurora Serverless v.1 editions.
+* In the private subnets, Amazon Aurora database instances. During deployment, you choose Aurora PostgreSQL-Compatible or Aurora Serverless v1 editions.
 * AWS Secrets Manager to store credentials for the Aurora database.
 * Parameter Store, a capability of AWS Systems Manager, to store parameters.
 * An Amazon Simple Storage Service (Amazon S3) bucket to store deployment artifacts.
