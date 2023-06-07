@@ -1,0 +1,17 @@
+:partner-solution-project-name: quickstart-salesforce-connect-appsync-rds-postgresql
+:partner-solution-github-org: aws-quickstart
+:partner-product-name: Salesforce Connect Adapter for GraphQL
+:partner-product-short-name: Salesforce Connect Adapter for GraphQL
+:partner-company-name: Salesforce Inc.
+:doc-month: June
+:doc-year: 2023
+:partner-contributors: Ross Belmont and Georgia Liu, {partner-company-name}
+// :other-contributors: Akua Mansa, Trek10
+:aws-contributors: Kishore Dhamodaran and Shitij Agarwal, AWS Strategic Accounts team
+:aws-ia-contributors: Vinod Shukla, AWS Integration & Automation team
+:deployment_time: 30 minutes
+:default_deployment_region: us-east-1
+// :private_repo:
+
+
+// For instructions on creating this deployment guide, refer to "Build your AWS Partner Solution documentation" (https://aws-ia-us-west-2.s3.us-west-2.amazonaws.com/docs/content/index.html#/).
