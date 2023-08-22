@@ -27,6 +27,7 @@ type Graphqlsample_MyOrderItem implements Node {
 }
 
 type Graphqlsample_MyOrderItem_Connection {
+  pageInfo: PageInfo!
   edges: [Graphqlsample_MyOrderItem_Edge]
 }
 
@@ -74,7 +75,7 @@ type Mutation {
 }
 
 type Query {
-  graphqlsample_MyOrder(limit: Int, offset: Int, orderBy: [Graphqlsample_MyOrder_OrderByInput], where: Graphqlsample_MyOrder_FilterInput): Graphqlsample_MyOrder_Connection
+  graphqlsample_MyOrder(first: Int, limit: Int, offset: Int, orderBy: [Graphqlsample_MyOrder_OrderByInput], where: Graphqlsample_MyOrder_FilterInput): Graphqlsample_MyOrder_Connection
   graphqlsample_MyOrderItem(limit: Int, offset: Int, orderBy: [Graphqlsample_MyOrderItem_OrderByInput], where: Graphqlsample_MyOrderItem_FilterInput): Graphqlsample_MyOrderItem_Connection
   graphqlsample_MyProduct(limit: Int, offset: Int, orderBy: [Graphqlsample_MyProduct_OrderByInput], where: Graphqlsample_MyProduct_FilterInput): Graphqlsample_MyProduct_Connection
   node(id: ID!): Node
@@ -315,4 +316,11 @@ input StringOperator {
   lt: String
   ne: String
   nin: [String]
+}
+
+type PageInfo {
+	hasNextPage: Boolean!
+	hasPreviousPage: Boolean!
+	endCursor: String
+	startCursor: String
 }
