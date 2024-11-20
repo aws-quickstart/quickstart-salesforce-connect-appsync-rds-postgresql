@@ -16,7 +16,7 @@
         <software.amazon.awssdk>2.18.4</software.amazon.awssdk>
 
         <junit.jupiter.version>5.9.0</junit.jupiter.version>
-        <com.google.guava.version>31.1-jre</com.google.guava.version>
+        <com.google.guava.version>32.0.0-jre</com.google.guava.version>
         <com.google.code.gson>2.10</com.google.code.gson>
         
         <org.postgresql.version>42.5.1</org.postgresql.version>
